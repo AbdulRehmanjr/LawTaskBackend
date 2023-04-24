@@ -1,37 +1,29 @@
-package com.lawstack.app.model;
+package com.lawstack.app.dto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
+import com.lawstack.app.model.Role;
 
-import jakarta.persistence.Lob;
-
-import jakarta.persistence.ManyToOne;
-
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "USERTABLE")
-public class User {
-
-    @Id
+public class UserDto {
+    
     private String userId;
 
     private String userName;
 
-    @Column(unique = true)
     private String email;
     
-    private String password;
-
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
     private byte[] profilePicture;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Role role;
+
+    public UserDto() {
+    }
+
+    public UserDto(String userId, String userName, String email,byte[] profilePicture, Role role) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.profilePicture = profilePicture;
+        this.role = role;
+    }
 
     public String getUserId() {
         return userId;
@@ -57,14 +49,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public byte[] getProfilePicture() {
         return profilePicture;
     }
@@ -80,5 +64,4 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-
 }

@@ -23,29 +23,29 @@ public class RoleServiceImp implements RoleService {
     public Role saveRole(Role role) {
 
         log.info("Inserting new role in database");
-        
-        Role result = this.roleRepo.findByRoleName(role.getRoleName());
 
-        if(result==null){
-            String id = UUID.randomUUID().toString();
-            role.setRoleId(id);
+        String id = UUID.randomUUID().toString();
+        role.setRoleId(id);
+        Role result =null;
+        try {
             result = this.roleRepo.save(role);
-            return result;
+        } catch (Exception e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
         }
-
-        return null;
+        
+        return result;
 
     }
 
     @Override
     public Role getRoleByName(String roleName) {
 
-        log.info("Selecting role from database with given name {}",roleName);
-        
+        log.info("Selecting role from database with given name {}", roleName);
+
         Role result = this.roleRepo.findByRoleName(roleName);
 
-        if(result!=null){
-            
+        if (result != null) {
+
             return result;
         }
 
@@ -54,14 +54,14 @@ public class RoleServiceImp implements RoleService {
 
     @Override
     public List<Role> getAllRoles() {
-       log.info("Selecting all roles from database");
+        log.info("Selecting all roles from database");
 
-       List<Role> roles = this.roleRepo.findAll();
+        List<Role> roles = this.roleRepo.findAll();
 
-       if(roles.isEmpty()){
+        if (roles.isEmpty()) {
             return null;
-       }
-       return roles;
+        }
+        return roles;
     }
 
 }

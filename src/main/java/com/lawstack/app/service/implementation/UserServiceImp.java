@@ -18,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserServiceImp implements UserService {
 
-    final static String DEFAULT_USER = "USER";
+    final  String DEFAULT_USER = "USER";
+    final  String SELLER = "SELLER";
+    final static String ADMIN = "ADMIN";
 
     @Autowired
     private UserRespository userRepo;
