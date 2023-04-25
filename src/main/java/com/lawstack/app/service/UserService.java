@@ -8,6 +8,8 @@ public interface UserService {
     
      User saveUser(User user);
 
+     User saveAdmin(User user);
+
      List<User> getAllUsersByUserName(String userName);
 
      User getUserById(String userId);

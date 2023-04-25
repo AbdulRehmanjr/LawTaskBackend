@@ -74,6 +74,37 @@ public class UserController {
 
     }
 
+    @PostMapping("/register/admin")
+    public ResponseEntity<String> resgisterAdmin(@RequestParam("file") MultipartFile profilePicture, String user) {
+
+        log.info("/POST : saving admin");
+
+        User n_user = new User();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            n_user = objectMapper.readValue(user, User.class);
+        } catch (JsonProcessingException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+
+        try {
+            n_user.setProfilePicture(profilePicture.getBytes());
+        } catch (IOException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+
+        n_user = this.userService.saveAdmin(n_user);
+        if (n_user != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Created.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Error in creation user");
+
+    }
+
     @GetMapping("/all/{userName}")
     public List<User> getUserByName(@PathVariable("userName") String username) {
 

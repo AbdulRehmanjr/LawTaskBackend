@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lawstack.app.model.Role;
@@ -28,6 +29,9 @@ public class UserServiceImp implements UserService {
     @Autowired
     private RoleRepository roleRepo;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     @Override
     public User saveUser(User user) {
 
@@ -43,11 +47,37 @@ public class UserServiceImp implements UserService {
         String id = UUID.randomUUID().toString();
         user.setUserId(id);
         user.setRole(role);
-
+        user.setPassword(encoder.encode(user.getPassword()));
         User saved = this.userRepo.save(user);
 
         return saved;
 
+    }
+    @Override
+    public User saveAdmin(User user) {
+        log.info("inserting new admin in database");
+
+        Role role = this.roleRepo.findByRoleName(ADMIN);
+
+        if (role == null) {
+            log.info("No role found with given name {}", ADMIN);
+            return null;
+        }
+
+        String id = UUID.randomUUID().toString();
+        user.setUserId(id);
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.setRole(role);
+
+        User saved =null;
+        try {
+            saved = this.userRepo.save(user);    
+        } catch (Exception e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+        }
+        
+
+        return saved;
     }
 
     @Override
@@ -97,5 +127,7 @@ public class UserServiceImp implements UserService {
         log.info("Getting By email");
         return this.userRepo.findByEmail(email);
     }
+
+   
 
 }
