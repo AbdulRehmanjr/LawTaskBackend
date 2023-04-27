@@ -6,4 +6,5 @@ import com.lawstack.app.model.Seller;
 
 public interface SellerRespository extends JpaRepository<Seller,String>{
      
+    Seller findByUserId(String userId);
 }

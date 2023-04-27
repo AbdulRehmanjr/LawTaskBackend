@@ -15,10 +15,12 @@ public class Seller {
 
     private String firstName;
     private String lastName;
+    private String userId;
 
     @Column(unique = true)
     private String email;
 
+    private boolean isactive=false;
     private int charges;
     private String jobName;
     private String[] skills;
@@ -33,6 +35,10 @@ public class Seller {
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] document;
+
+    private String documentType;
+
+    private String documentName;
 
     public String getSellerId() {
         return sellerId;
@@ -128,6 +134,38 @@ public class Seller {
 
     public void setDocument(byte[] document) {
         this.document = document;
+    }
+
+    public boolean isIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(boolean isactive) {
+        this.isactive = isactive;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
     
 
