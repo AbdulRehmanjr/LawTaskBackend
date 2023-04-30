@@ -1,5 +1,7 @@
 package com.lawstack.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 import jakarta.persistence.ManyToOne;
-
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,6 +33,10 @@ public class User {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Seller seller;
 
     public String getUserId() {
         return userId;

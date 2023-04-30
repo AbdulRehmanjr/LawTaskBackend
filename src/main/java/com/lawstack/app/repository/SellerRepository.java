@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.lawstack.app.model.Seller;
 
-public interface SellerRespository extends JpaRepository<Seller,String>{
-     
-    Seller findByUserId(String userId);
-}
+public interface SellerRepository  extends JpaRepository<Seller,String>{
+    
+    Seller findByUserUserId(String userId);
+}   

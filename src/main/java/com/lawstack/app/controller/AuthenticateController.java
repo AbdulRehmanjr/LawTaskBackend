@@ -1,9 +1,5 @@
 package com.lawstack.app.controller;
 
-import java.security.Principal;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +8,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,11 +40,19 @@ public class AuthenticateController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // generate token
+    /**
+     * 
+     * This function takes a JWT request and generates a JWT token using the
+     * provided secret key.
+     * 
+     * @param jwtRequest the JWT request object containing the user's details
+     * @return a JWT token containing the user's details and a signature
+     * @throws Exception if there is an error while generating the JWT token
+     */
     @PostMapping("/generate")
     public ResponseEntity<?> generateToken(@RequestBody JwtRequest request) {
 
-        log.info("Request for generating token. by user {}",request.getUserEmail());
+        log.info("Request for generating token. by user {}", request.getUserEmail());
         try {
             authentication(request.getUserEmail(), request.getPassword());
         } catch (Exception e) {

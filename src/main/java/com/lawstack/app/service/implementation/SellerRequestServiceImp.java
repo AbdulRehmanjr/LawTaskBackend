@@ -11,37 +11,45 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawstack.app.model.Seller;
-import com.lawstack.app.repository.SellerRespository;
+import com.lawstack.app.model.SellerRequest;
+import com.lawstack.app.model.User;
+import com.lawstack.app.repository.SellerRequestRespository;
+import com.lawstack.app.service.SellerRequestService;
 import com.lawstack.app.service.SellerService;
+import com.lawstack.app.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class SellerServiceImp  implements SellerService{
+public class SellerRequestServiceImp  implements SellerRequestService{
     
     @Autowired
-    private SellerRespository sellerRepo;
+    private SellerRequestRespository sellerRepo;
 
+    @Autowired
+    private UserService userService;
 
-    
+    @Autowired
+    private SellerService sellerService;
+
     /**
      * @implSpec This will do necessary checks and forward request for processing
      * @since v1.0.0
      * ! May be got some changes in future versions
      */
     @Override
-    public Seller requestForSeller(String sellerInfo, MultipartFile profilePictre, MultipartFile document) {
+    public SellerRequest requestForSeller(String sellerInfo, MultipartFile profilePictre, MultipartFile document) {
         
         log.info("Saving Seller Request Data in database");
 
         String id = UUID.randomUUID().toString();
-        Seller seller = new Seller();
+        SellerRequest seller = new SellerRequest();
         ObjectMapper json = new ObjectMapper();
 
         //* Converting string into JSON
         try {
-            seller = json.readValue(sellerInfo, Seller.class);
+            seller = json.readValue(sellerInfo, SellerRequest.class);
         } catch (JsonProcessingException e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
@@ -68,17 +76,33 @@ public class SellerServiceImp  implements SellerService{
         }
         return seller;
     }
-
      /**
      *@implSpec List of all requests made 
      *@since v1.0.0
      *! May be got some changes in future versions
      */
     @Override
-    public Seller fetchRequestByUserId(String userId) {
+    public SellerRequest fetchRequestBySellerId(String sellerId) {
+        log.info("Fetch the request by sellerId");
+
+        SellerRequest seller = this.sellerRepo.findById(sellerId).get();
+
+        if(seller==null){
+            log.info("Seller not found with given sellerId {}",sellerId);
+            return null;
+        }
+        return seller;
+    }
+     /**
+     *@implSpec List of all requests made 
+     *@since v1.0.0
+     *! May be got some changes in future versions
+     */
+    @Override
+    public SellerRequest fetchRequestByUserId(String userId) {
         log.info("Fetch the request by userId");
 
-        Seller seller = this.sellerRepo.findByUserId(userId);
+        SellerRequest seller = this.sellerRepo.findByUserId(userId);
 
         if(seller==null){
             log.info("Seller not found with given userId {}",userId);
@@ -94,16 +118,51 @@ public class SellerServiceImp  implements SellerService{
      * ! May be got some changes in future versions
      */
     @Override
-    public List<Seller> getAllRequest() {
+    public List<SellerRequest> getAllRequest() {
         log.info("Fetching all request in inactive state");
 
-        List<Seller> sellersRequest = this.sellerRepo.findAll();
+        List<SellerRequest> sellersRequest = this.sellerRepo.findAllByisActiveFalse();
 
-        log.info("Request {}",sellersRequest);
-        if(sellersRequest.size()<=0){
+        
+        if(sellersRequest == null ){
             return null;
         }
         return sellersRequest;
+    }
+
+    /**
+     * @implSpec Accept the seller request by admin
+     * @since v1.0.0
+     * ! May be got some changes in future versions
+     */
+    @Override
+    public SellerRequest approvedRequest(String sellerId) {
+        
+        log.info("Fetcing the seller from database  to for approval");
+        SellerRequest seller = this.sellerRepo.findById(sellerId).get();
+
+        if(seller==null){
+            log.info("Seller not existed with given sellerId: {}",sellerId);
+            return null;
+        }
+        
+        if(seller.isActive()==false){
+            
+            seller.setActive(true);
+
+            Seller Seller = new Seller();
+            User user = new User();
+
+            user.setUserId(seller.getUserId());
+
+            Seller.setUser(user);
+            Seller.setActive(false);
+            
+            this.sellerService.createSeller(Seller);
+            this.userService.updateUserRole(seller.getUserId());
+        }
+        
+        return seller;
     }
 
 

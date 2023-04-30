@@ -127,6 +127,31 @@ public class UserServiceImp implements UserService {
         log.info("Getting By email");
         return this.userRepo.findByEmail(email);
     }
+    /**
+     * * update the role of user to seller after admin approval
+     */
+    @Override
+    public User updateUserRole(String userId) {
+        
+        log.info("Updating the user after its seller request accpeted.");
+
+        User user = this.userRepo.findById(userId).get();
+
+        Role role = this.roleRepo.findByRoleName(SELLER);
+
+
+        if(user==null){
+            log.info("User not found with given user Id");
+            return null;
+        }
+
+        user.setRole(role);
+
+        this.userRepo.save(user);
+        return user;
+        
+
+    }
 
    
 

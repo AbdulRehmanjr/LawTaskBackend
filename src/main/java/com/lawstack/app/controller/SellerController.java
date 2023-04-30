@@ -1,7 +1,5 @@
 package com.lawstack.app.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,70 +7,68 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.service.annotation.PutExchange;
 
+import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.service.SellerService;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/seller")
 @CrossOrigin("${cross_origin}")
+@Slf4j
 public class SellerController {
 
     @Autowired
     private SellerService sellerService;
 
-    /**
-     * @apiNote This api will forward request to service layer
-     * @param User,picture,document These are recieved as formData
-     * @since v1.0.0
-     */
-    @PostMapping("/request")
-    ResponseEntity<?> requestSeller(@RequestParam("seller") String user,
-            @RequestParam("profilePicture") MultipartFile profilePictre,
-            @RequestParam("document") MultipartFile document) {
-        log.info("/POST : Request for seller account");
+    @PostMapping("/save")
+    ResponseEntity<?> saveSeller(@RequestBody Seller seller) {
 
-        Seller seller = this.sellerService.requestForSeller(user, profilePictre, document);
+        log.info("Received the Request for saving seller.");
 
-        if (seller == null) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error in saving the seller provided data.");
+        Seller response = this.sellerService.createSeller(seller);
+
+        if (response == null) {
+            log.info("Seller creation error.");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Creation Successfull Now Please wait for admin review on Request");
-    }
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     @GetMapping("/{userId}")
-    ResponseEntity<Seller> getSellerByUserId(@PathVariable String userId){
+    ResponseEntity<?> getSeller(@PathVariable String userId) {
 
-        log.info("Request for seller using userId: {}",userId);
-        
-        Seller seller = this.sellerService.fetchRequestByUserId(userId);
+        log.info("Received request to get seller by user Id : {}",userId);
 
-        if(seller!=null){
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(seller);
+        Seller response = this.sellerService.getSellerByUserId(userId);
+
+        if (response == null) {
+            
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @GetMapping("/pending")
-    List<Seller> pendingRequests() {
+    @PostMapping("/subscribe")
+    ResponseEntity<?> subscribed(@RequestBody CardSubscription card) {
 
-        log.info("Requesting for pending seller list");
+        log.info("Received request to set the subscription of user : {}",card.getUserId());
 
-        List<Seller> sellers = this.sellerService.getAllRequest();
+        Seller response = this.sellerService.addSubscription(card);
 
-        if(sellers.size()<=0){
-            return null;
+        if (response == null) {
+            
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return sellers;
-    }
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }

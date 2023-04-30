@@ -1,10 +1,13 @@
 package com.lawstack.app.model;
 
-import jakarta.persistence.Column;
+
+
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name="SELLERTABLE")
@@ -13,32 +16,19 @@ public class Seller {
     @Id
     private String sellerId;
 
-    private String firstName;
-    private String lastName;
-    private String userId;
+    @OneToOne
+    private User user;
 
-    @Column(unique = true)
-    private String email;
+    @Nullable
+    private int currentJobs;
 
-    private boolean isactive=false;
-    private int charges;
-    private String jobName;
-    private String[] skills;
-    private String tagLine;
-    private String location;
-    private String description;
+    @Nullable
+    private int maxJobs;
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] profilePicture;
-
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] document;
-
-    private String documentType;
-
-    private String documentName;
+    @Nullable
+    private String sellerType;
+    
+    private boolean active=false;
 
     public String getSellerId() {
         return sellerId;
@@ -48,126 +38,46 @@ public class Seller {
         this.sellerId = sellerId;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public User getUser() {
+        return user;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getLastName() {
-        return lastName;
+    public int getCurrentJobs() {
+        return currentJobs;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setCurrentJobs(int currentJobs) {
+        this.currentJobs = currentJobs;
     }
 
-    public String getEmail() {
-        return email;
+    public int getMaxJobs() {
+        return maxJobs;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMaxJobs(int maxJobs) {
+        this.maxJobs = maxJobs;
     }
 
-    public int getCharges() {
-        return charges;
+    public String getSellerType() {
+        return sellerType;
     }
 
-    public void setCharges(int charges) {
-        this.charges = charges;
+    public void setSellerType(String sellerType) {
+        this.sellerType = sellerType;
     }
 
-    public String getJobName() {
-        return jobName;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public String[] getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String[] skills) {
-        this.skills = skills;
-    }
-
-    public String getTagLine() {
-        return tagLine;
-    }
-
-    public void setTagLine(String tagLine) {
-        this.tagLine = tagLine;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public byte[] getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public byte[] getDocument() {
-        return document;
-    }
-
-    public void setDocument(byte[] document) {
-        this.document = document;
-    }
-
-    public boolean isIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(boolean isactive) {
-        this.isactive = isactive;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
-    }
-
-    public String getDocumentName() {
-        return documentName;
-    }
-
-    public void setDocumentName(String documentName) {
-        this.documentName = documentName;
-    }
     
 
-    
 }

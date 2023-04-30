@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
                         .requestMatchers("/user/auth").hasAuthority("ADMIN")
-                        .requestMatchers("/role/**", "/token/**", "/user/**", "/seller/**")
+                        .requestMatchers("/role/**", "/token/**", "/user/**","/seller/**", "/sellerrequest/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)

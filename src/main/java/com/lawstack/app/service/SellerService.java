@@ -2,15 +2,18 @@ package com.lawstack.app.service;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
+import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.Seller;
 
 public interface SellerService {
-    
-    Seller requestForSeller(String sellerInfo,MultipartFile profilePictre,MultipartFile document ); 
-    
-    Seller fetchRequestByUserId(String userId);
-    
-    List<Seller> getAllRequest();
+
+    Seller createSeller(Seller seller);
+
+    Seller getBySellerId(String sellerId);
+
+    List<Seller> getAll();
+
+    Seller getSellerByUserId(String userId);
+
+    Seller addSubscription(CardSubscription card);
 }
