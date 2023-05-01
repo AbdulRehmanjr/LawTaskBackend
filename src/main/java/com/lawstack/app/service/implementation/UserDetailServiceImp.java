@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailServiceImp implements UserDetailsService {
     
     @Autowired
     private UserRespository userRepo;

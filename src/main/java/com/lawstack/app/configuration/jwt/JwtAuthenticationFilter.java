@@ -16,14 +16,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.lawstack.app.service.implementation.UserDetailServiceImpl;
+import com.lawstack.app.service.implementation.UserDetailServiceImp;
 
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserDetailServiceImpl userDetails;
+    private UserDetailServiceImp userDetails;
     @Autowired
     private JwtUtil jwtUtil;
 

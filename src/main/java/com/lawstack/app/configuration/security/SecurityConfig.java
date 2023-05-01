@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.lawstack.app.configuration.jwt.JwtAuthenticationEntryPoint;
 import com.lawstack.app.configuration.jwt.JwtAuthenticationFilter;
-import com.lawstack.app.service.implementation.UserDetailServiceImpl;
+import com.lawstack.app.service.implementation.UserDetailServiceImp;
 
 @EnableWebSecurity
 @Configuration
@@ -34,7 +34,7 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
-    private UserDetailServiceImpl userDetailService;
+    private UserDetailServiceImp userDetailService;
 
     @Bean
     AuthenticationProvider authenticationProvider() {
@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
                         .requestMatchers("/user/auth").hasAuthority("ADMIN")
-                        .requestMatchers("/role/**", "/token/**", "/user/**","/seller/**", "/sellerrequest/**")
+                        .requestMatchers("/role/**", "/token/**", "/user/**","/seller/**", "/sellerrequest/**","/job/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)

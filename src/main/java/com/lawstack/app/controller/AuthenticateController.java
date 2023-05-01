@@ -21,7 +21,7 @@ import com.lawstack.app.model.JwtRequest;
 import com.lawstack.app.model.JwtResponse;
 import com.lawstack.app.model.User;
 import com.lawstack.app.service.UserService;
-import com.lawstack.app.service.implementation.UserDetailServiceImpl;
+import com.lawstack.app.service.implementation.UserDetailServiceImp;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +34,7 @@ public class AuthenticateController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private UserDetailServiceImpl userDetailsService;
+    private UserDetailServiceImp userDetailsService;
     @Autowired
     private UserService userService;
     @Autowired

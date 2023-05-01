@@ -13,7 +13,10 @@ public interface SellerService {
 
     List<Seller> getAll();
 
+
     Seller getSellerByUserId(String userId);
 
     Seller addSubscription(CardSubscription card);
+
+    Seller updateJobStatus(Seller seller);
 }

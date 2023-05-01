@@ -19,14 +19,14 @@ public class Seller {
     @OneToOne
     private User user;
 
-    @Nullable
-    private int currentJobs;
+    
+    private int currentJobs = 0;
 
-    @Nullable
-    private int maxJobs;
+    
+    private int maxJobs = 0;
 
-    @Nullable
-    private String sellerType;
+    
+    private String sellerType ="NONE";
     
     private boolean active=false;
 

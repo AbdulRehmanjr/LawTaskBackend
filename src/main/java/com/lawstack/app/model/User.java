@@ -1,5 +1,7 @@
 package com.lawstack.app.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -10,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -37,6 +40,10 @@ public class User {
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Seller seller;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Job> job;
 
     public String getUserId() {
         return userId;
@@ -84,6 +91,22 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public List<Job> getJob() {
+        return job;
+    }
+
+    public void setJob(List<Job> job) {
+        this.job = job;
     }
 
 }

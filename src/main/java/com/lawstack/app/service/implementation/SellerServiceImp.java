@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class SellerServiceImpl implements SellerService {
+public class SellerServiceImp implements SellerService {
 
     @Autowired
     private SellerRepository sellerRepo;
@@ -90,11 +90,23 @@ public class SellerServiceImpl implements SellerService {
             return null;
         }
         seller.setActive(true);
-        seller.setCurrentJobs(0);
         seller.setMaxJobs(JobNumber.valueOf(card.getSubscription()).getValue());
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
         return seller;
     }
+
+    @Override
+    public Seller updateJobStatus(Seller seller) {
+       log.info("Update the job status");
+       Seller response = this.sellerRepo.findByUserUserId(seller.getUser().getUserId());
+
+       if(response==null){
+        return null;
+       }
+       return this.sellerRepo.save(seller);
+    }
+
+    
 
 }

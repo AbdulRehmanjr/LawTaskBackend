@@ -82,7 +82,7 @@ public class SellerRequestController {
 
         List<SellerRequest> sellers = this.sellerService.getAllRequest();
 
-        if (sellers.size() <= 0) {
+        if (sellers.isEmpty()) {
             return null;
         }
         return sellers;
