@@ -1,4 +1,4 @@
-package com.lawstack.app.utils;
+package com.lawstack.app.utils.enums;
 
 
 public enum JobNumber {

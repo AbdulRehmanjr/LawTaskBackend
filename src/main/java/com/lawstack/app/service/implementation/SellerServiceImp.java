@@ -12,7 +12,7 @@ import com.lawstack.app.model.User;
 import com.lawstack.app.repository.SellerRepository;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.UserService;
-import com.lawstack.app.utils.JobNumber;
+import com.lawstack.app.utils.enums.JobNumber;
 
 import lombok.extern.slf4j.Slf4j;
 

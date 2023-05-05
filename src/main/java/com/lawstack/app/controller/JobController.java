@@ -21,11 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawstack.app.model.Job;
 import com.lawstack.app.service.JobService;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
+
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@CrossOrigin("${cross_origin}")
 @RequestMapping("/job")
 @Slf4j
 public class JobController {
@@ -83,6 +82,7 @@ public class JobController {
         log.info("Geting all jobs by job Name {}",jobName);
 
         List<Job> jobs = this.jobService.getJobsByJobName(jobName);
+
         
         if(jobs == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

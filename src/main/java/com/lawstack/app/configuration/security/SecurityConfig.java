@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,13 +22,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import com.lawstack.app.configuration.jwt.JwtAuthenticationEntryPoint;
 import com.lawstack.app.configuration.jwt.JwtAuthenticationFilter;
 import com.lawstack.app.service.implementation.UserDetailServiceImp;
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig   {
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -35,6 +37,8 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private UserDetailServiceImp userDetailService;
+
+    final private String origin = "http://localhost:4200";
 
     @Bean
     AuthenticationProvider authenticationProvider() {
@@ -62,9 +66,13 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors()
                 .and()
+                .headers()
+                .frameOptions().sameOrigin()
+                .and()
                 .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
                         .requestMatchers("/user/auth").hasAuthority("ADMIN")
-                        .requestMatchers("/role/**", "/token/**", "/user/**","/seller/**", "/sellerrequest/**","/job/**")
+                        .requestMatchers("/role/**", "/token/**", "/user/**", "/seller/**", "/sellerrequest/**",
+                                "/job/**", "/chat/**", "/socket.io/**", "/app/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
@@ -76,13 +84,14 @@ public class SecurityConfig {
         return http.build();
     }
 
+    
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList(origin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token","acess-control-allow-origin"));
+        configuration.setExposedHeaders(Arrays.asList("x-auth-token","acess-control-allow-origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -1,6 +1,8 @@
 package com.lawstack.app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/token")
-@CrossOrigin("${cross_origin}")
+@CrossOrigin("http://localhost:4200")
 public class AuthenticateController {
 
     @Autowired
@@ -39,6 +41,7 @@ public class AuthenticateController {
     private UserService userService;
     @Autowired
     private JwtUtil jwtUtil;
+
 
     /**
      * 
@@ -51,7 +54,7 @@ public class AuthenticateController {
      */
     @PostMapping("/generate")
     public ResponseEntity<?> generateToken(@RequestBody JwtRequest request) {
-
+        
         log.info("Request for generating token. by user {}", request.getUserEmail());
         try {
             authentication(request.getUserEmail(), request.getPassword());

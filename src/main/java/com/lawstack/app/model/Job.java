@@ -20,6 +20,8 @@ public class Job {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] jobImage;
     
+    private int jobPrice=10;
+    
     private Double likes = 0.0;
 
     private Double views =0.0;
@@ -73,5 +75,13 @@ public class Job {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getJobPrice() {
+        return jobPrice;
+    }
+
+    public void setJobPrice(int jobPrice) {
+        this.jobPrice = jobPrice;
     }
 }
