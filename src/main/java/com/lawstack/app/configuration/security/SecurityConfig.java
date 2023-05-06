@@ -2,6 +2,7 @@ package com.lawstack.app.configuration.security;
 
 import java.util.Arrays;
 
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.lawstack.app.configuration.jwt.JwtAuthenticationEntryPoint;
 import com.lawstack.app.configuration.jwt.JwtAuthenticationFilter;
@@ -29,7 +32,7 @@ import com.lawstack.app.service.implementation.UserDetailServiceImp;
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfig   {
+public class SecurityConfig implements WebMvcConfigurer {
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -72,7 +75,7 @@ public class SecurityConfig   {
                 .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
                         .requestMatchers("/user/auth").hasAuthority("ADMIN")
                         .requestMatchers("/role/**", "/token/**", "/user/**", "/seller/**", "/sellerrequest/**",
-                                "/job/**", "/chat/**", "/socket.io/**", "/app/**")
+                                "/job/**", "/chat/**", "/ws/**", "/app/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
@@ -85,13 +88,15 @@ public class SecurityConfig   {
     }
 
     
+   
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(origin));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token","acess-control-allow-origin"));
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token","acess-control-allow-origin"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("x-Auth-Token","Acess-Control-Allow-Origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

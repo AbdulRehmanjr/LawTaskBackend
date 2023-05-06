@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.PutExchange;
 
 import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.Seller;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/seller")
-@CrossOrigin("${cross_origin}")
 @Slf4j
 public class SellerController {
 

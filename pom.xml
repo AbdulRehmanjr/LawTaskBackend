@@ -51,7 +51,7 @@
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-core</artifactId>
 		</dependency>
-	
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -80,12 +80,22 @@
 		</dependency>
 
 
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>annotationProcessor</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.92.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>com.corundumstudio.socketio</groupId>
+			<artifactId>netty-socketio</artifactId>
+			<version>1.7.22</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
