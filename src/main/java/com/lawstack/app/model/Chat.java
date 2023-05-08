@@ -18,4 +18,5 @@ public class Chat {
     private String receiverName;
     private String content;
     private String Date;
+    private String type;
 }

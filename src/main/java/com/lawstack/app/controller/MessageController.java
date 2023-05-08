@@ -2,31 +2,40 @@ package com.lawstack.app.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.lawstack.app.model.Message;
-import com.lawstack.app.service.MessageService;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
+
+import com.lawstack.app.model.Chat;
+
 import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("/message")
-@RestController
+@Controller
 @Slf4j
 public class MessageController {
     
     @Autowired
-    private MessageService messageService;
+    private SimpMessagingTemplate smt;
+    @MessageMapping("/message")
+    @SendTo("/chatroom/public")
+    private Chat receivedMessage(@Payload Chat message){
 
-    @PostMapping("/send")
-    ResponseEntity<?> sendMessage(@RequestBody Message message){
+        log.info(message.toString());
+        message.setType("RECEIVER");
+        return message;
+    }
 
-        log.info("MEssage :",message);
-        return ResponseEntity.status(HttpStatus.CREATED).body("found");
+    /**
+     * @info /user/{name}/private
+     */
+    @MessageMapping("/private-message")
+    private Chat receivedPrivateMessage(@Payload Chat message){
+        message.setType("RECEIVER");
+        smt.convertAndSendToUser(message.getReceiverName(), "/private", message);
+        return message;
     }
 }

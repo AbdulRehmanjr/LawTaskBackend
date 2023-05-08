@@ -30,16 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/user")
-@CrossOrigin("${cross_origin}")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> resgisterUser(@RequestParam("file") MultipartFile profilePicture, String user) {
+    public ResponseEntity<?> resgisterUser(@RequestParam("file") MultipartFile profilePicture, String user) {
 
-        log.info("/POST : saving user");
+        
 
         User n_user = new User();
 
@@ -68,7 +67,7 @@ public class UserController {
 
         n_user = this.userService.saveUser(n_user);
         if (n_user != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Success Fully created.");
+            return ResponseEntity.status(HttpStatus.CREATED).body(n_user);
         }
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Error in creation user");
 
@@ -133,9 +132,9 @@ public class UserController {
         }
         log.info("User Found.");
 
-        UserDto user = dtoConverter.UserToDto(result);
+        // UserDto user = dtoConverter.UserToDto(result);
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
 
     }
 
