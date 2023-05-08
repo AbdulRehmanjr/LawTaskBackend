@@ -13,9 +13,9 @@ public class ChatUserList {
     @Id
     private String id;
 
-    private String UserId;
+    private String userId;
 
-    private List<String> UsersTo = null;
+    private List<String> usersTo = null;
 
     public String getId() {
         return id;
@@ -26,23 +26,25 @@ public class ChatUserList {
     }
 
     public String getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(String userId) {
-        UserId = userId;
+        this.userId = userId;
     }
 
     public List<String> getUsersTo() {
-        return UsersTo;
+        return usersTo;
     }
 
     public void setUsersTo(List<String> usersTo) {
-        UsersTo = usersTo;
+        this.usersTo = usersTo;
     }
 
     @Override
     public String toString() {
-        return "ChatUserList [id=" + id + ", UserId=" + UserId + ", UsersTo=" + UsersTo + "]";
+        return "ChatUserList [id=" + id + ", userId=" + userId + ", usersTo=" + usersTo + "]";
     }
+
+  
 }
