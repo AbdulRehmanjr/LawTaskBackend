@@ -1,7 +1,6 @@
 package com.lawstack.app.service.implementation;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,12 +33,9 @@ public class MessageServiceImp  implements MessageService{
 
     @Override
     public Chat saveMessages(Chat message) {
+
         log.info("Saving mew Message to database");
 
-        
-        String id = UUID.randomUUID().toString();
-
-        message.setId(id);
         return this.messageRepo.save(message);
     }
 
@@ -47,8 +43,7 @@ public class MessageServiceImp  implements MessageService{
     public List<Chat> getAllMessageByChat(String userId, String receiverId) {
         log.info("Get all chats by sender and reciver name");
         
-        List<Chat> chats = this.messageRepo.findAllBySenderNameAndReceiverName(userId, receiverId);
-
+        List<Chat> chats = this.messageRepo.findAllBySenderNameAndReceiverNameOrReceiverNameAndSenderName(userId, receiverId,userId,receiverId);
         return chats;
     }
 

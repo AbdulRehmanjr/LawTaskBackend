@@ -21,6 +21,8 @@ public class Job {
     private byte[] jobImage;
     
     private int jobPrice=10;
+
+    private String description;
     
     private Double likes = 0.0;
 
@@ -83,5 +85,13 @@ public class Job {
 
     public void setJobPrice(int jobPrice) {
         this.jobPrice = jobPrice;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
