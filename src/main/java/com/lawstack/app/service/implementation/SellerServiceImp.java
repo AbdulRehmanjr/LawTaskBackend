@@ -26,9 +26,9 @@ public class SellerServiceImp implements SellerService {
     @Autowired
     private UserService userService;
 
-    // private final static String NORMAL ="NORMAL";
-    // private final static String EXPERT = "EXPERT";
-    // private final static String PRO = "PRO";
+    private final static String NORMAL ="NORMAL";
+    private final static String EXPERT = "EXPERT";
+    private final static String PRO = "PRO";
 
     /**
      * @implSpec create a new seller

@@ -41,10 +41,12 @@ public class MessageController {
      */
     @MessageMapping("/private-message")
     private Chat receivedPrivateMessage(@Payload Chat message){
-        message.setType("RECEIVER");
-        log.info(message.getReceiverName());
+        
         try {
+            this.messageService.saveMessages(message);
+            message.setType("RECEIVER");
             smt.convertAndSendToUser(message.getSenderName(), "/private", message);    
+
         } catch (Exception e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
         }
