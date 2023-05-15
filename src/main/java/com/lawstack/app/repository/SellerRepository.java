@@ -10,4 +10,6 @@ public interface SellerRepository  extends JpaRepository<Seller,String>{
     
     Seller findByUserUserId(String userId);
 
+    Seller findByEmail(String email);
+
 }   

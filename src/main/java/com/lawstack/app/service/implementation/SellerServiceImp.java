@@ -49,6 +49,7 @@ public class SellerServiceImp implements SellerService {
         String id = UUID.randomUUID().toString();
         seller.setSellerId(id);
         seller.setUser(user);
+        
        
         
         this.sellerRepo.save(seller);
@@ -82,11 +83,11 @@ public class SellerServiceImp implements SellerService {
     }
 
     @Override
-    public Seller addSubscription(CardSubscription card) {
+    public Seller addSubscription(CardSubscription card,String email) {
 
-        Seller seller = this.sellerRepo.findByUserUserId(card.getUserId());
+        Seller seller = this.sellerRepo.findByEmail(email);
         if(seller ==null){
-            log.error("Seller may not exist with given user Id");
+            log.error("Seller may not exist with given email.");
             return null;
         }
         seller.setActive(true);

@@ -30,10 +30,6 @@ public class SellerRequest {
 
     @Lob
     @Column(columnDefinition = "LONGBLOB")
-    private byte[] profilePicture;
-
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
     private byte[] document;
 
     private String documentType;
@@ -118,14 +114,6 @@ public class SellerRequest {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public byte[] getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
     }
 
     public byte[] getDocument() {

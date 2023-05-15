@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lawstack.app.model.CardSubscription;
+
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.service.SellerService;
 
@@ -53,18 +53,5 @@ public class SellerController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @PostMapping("/subscribe")
-    ResponseEntity<?> subscribed(@RequestBody CardSubscription card) {
 
-        log.info("Received request to set the subscription of user : {}",card.getUserId());
-
-        Seller response = this.sellerService.addSubscription(card);
-
-        if (response == null) {
-            
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 }

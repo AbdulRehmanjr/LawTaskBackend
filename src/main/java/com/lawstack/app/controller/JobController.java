@@ -68,10 +68,15 @@ public class JobController {
         log.info("Geting all Jobs by userId");
         List<Job>  jobs = this.jobService.getJobsByUserId(userId);
 
-        if(jobs.isEmpty()==true){
-            log.info("jobs is empty ");
+        try {
+            if(jobs.isEmpty()==true){
+                log.info("jobs is empty "); 
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }    
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+        
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(jobs);
     }
 

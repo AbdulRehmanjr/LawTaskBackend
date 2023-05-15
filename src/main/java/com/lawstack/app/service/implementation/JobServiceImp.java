@@ -77,11 +77,16 @@ public class JobServiceImp  implements JobService{
       log.info("getting all jobs by User id: {}",userId);
         
       List<Job> jobs = this.jobRepo.findAllByUserUserId(userId);
-        log.info("{} {}",jobs.size(),jobs.isEmpty());
-      if(jobs.isEmpty()==true){
-        log.error("Jobs not found");
+      try {
+        if(jobs.isEmpty()==true){
+          log.error("Jobs not found");
+          return null;
+        }  
+      } catch (Exception e) {
+        log.error("Error : {}",e.getMessage());
         return null;
       }
+      
       return jobs;
 
     }
@@ -98,10 +103,13 @@ public class JobServiceImp  implements JobService{
 
       List<Job> jobs = this.jobRepo.findAllByJobNameContains(jobName);
 
-      
-
+      try{
       if(jobs.isEmpty()){
         log.error("Jobs not found");
+        return null;
+      }}
+      catch(Exception e ){
+        log.error("Error : {}",e.getMessage());
         return null;
       }
       return jobs;

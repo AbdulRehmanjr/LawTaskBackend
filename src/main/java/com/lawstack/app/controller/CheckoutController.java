@@ -3,112 +3,118 @@ package com.lawstack.app.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lawstack.app.model.PaymentRequest;
-import com.stripe.Stripe;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
-import com.stripe.model.PaymentIntent;
-import com.stripe.model.checkout.Session;
-import com.stripe.param.ChargeCreateParams;
-import com.stripe.param.PaymentIntentCreateParams;
-import com.stripe.param.checkout.SessionCreateParams;
 
-import jakarta.annotation.PostConstruct;
+import com.lawstack.app.model.CardSubscription;
+import com.lawstack.app.model.PaymentRequest;
+
+import com.lawstack.app.service.PaymentService;
+import com.lawstack.app.service.SellerService;
+import com.lawstack.app.service.SubscriptionService;
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Customer;
+import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.PaymentIntent;
+import com.stripe.model.StripeObject;
+
+import com.stripe.net.Webhook;
+
+
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/checkout")
 @Slf4j
 public class CheckoutController {
 
-    @Value("${stripe_secert_key}")
-    private String STRIPE_API;
+    @Autowired
+    private PaymentService paymentService;
 
-    @PostConstruct
-    public void init() {
-        Stripe.apiKey = STRIPE_API;
-    }
+    @Autowired
+    private SubscriptionService subService;
 
-    @PostMapping("/api/charge")
-    public ResponseEntity<?> processPayment(@RequestBody PaymentRequest paymentRequest) {
-        log.info(paymentRequest.toString());
-        try {
-            // Create a charge
-            Charge charge = Charge.create(
-                    new ChargeCreateParams.Builder()
-                            .setAmount(1999L) // Amount in cents (e.g., $19.99)
-                            .setCurrency("usd")
-                            .setDescription("Payment description")
-                            .setSource(paymentRequest.getToken())
-                            .build());
+    @Autowired
+    private SellerService sellerService;
 
-            // Handle successful charge
-            return ResponseEntity.status(201).body("Payment processed successfully!");
-        } catch (StripeException e) {
-            // Handle Stripe API error
-            e.printStackTrace();
-            return ResponseEntity.status(501).body("Error processing payment: " + e.getMessage());
-        }
-    }
-    @PostMapping("/payment-intent")
-    public String createPaymentIntent(@RequestBody PaymentRequest paymentRequest) {
-      log.info("{}",paymentRequest.getAmount());
-  
-      PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
-          .setAmount(7L) // Amount in cents (e.g., $19.99)
-          .setCurrency(paymentRequest.getCurrency())
-          .setDescription(paymentRequest.getDescription())
-          .build();
-  
-      try {
-        PaymentIntent paymentIntent = PaymentIntent.create(createParams);
-        return paymentIntent.getClientSecret();
-      } catch (StripeException e) {
-        e.printStackTrace();
-        // Handle payment intent creation error
-        return "Error creating payment intent: " + e.getMessage();
-      }
-    }
     @PostMapping("/create-checkout-session")
-    public Map<String, String> createCheckoutSession() {
-        SessionCreateParams params = SessionCreateParams.builder()
-                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .addLineItem(
-                        SessionCreateParams.LineItem.builder()
-                                .setPriceData(
-                                        SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("usd")
-                                                .setUnitAmount(2000L)
-                                                .setProductData(
-                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                .setName("Your Product")
-                                                                .build())
-                                                .build())
-                                .setQuantity(1L)
-                                .build())
-                .setSuccessUrl("http://localhost:4200/home")
-                .setCancelUrl("https://localhost:4200/home")
-                .build();
+    public ResponseEntity<?> createCheckoutSession(@RequestBody PaymentRequest payment) {
 
-        String sessionId;
-        try {
-            Session session = Session.create(params);
-            sessionId = session.getId();
-        } catch (StripeException e) {
-            throw new RuntimeException("Error creating Stripe checkout session", e);
+        log.info("Request for checkout page recived");
+
+        String s = this.paymentService.paymentCheckout(payment.getType(), payment.getEmail());
+
+        if (s != null) {
+
+            return ResponseEntity.status(201).body(s);
         }
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("id", sessionId);
-        return responseData;
+        return ResponseEntity.status(404).body(null);
+
     }
+
+    private final String endpointSecret = "whsec_dab51112fcb3a579d7ecd42b56f103c1fbbe197877caf3a2b810c7d76f4d14b4";
+
+    @PostMapping("/webhook")
+    public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String signature) {
+
+        try {
+            Event event = Webhook.constructEvent(payload, signature, endpointSecret);
+
+            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            StripeObject stripeObject = null;
+            if (dataObjectDeserializer.getObject().isPresent()) {
+
+                stripeObject = dataObjectDeserializer.getObject().get();
+
+                switch (event.getType()) {
+                    case "payment_intent.succeeded":
+
+                        PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+                        Customer customer = null;
+                        try {
+                            customer = this.subService.retrievCustomer(paymentIntent.getCustomer());
+                            CardSubscription sub = new CardSubscription();
+                            
+                            sub.setSubscription(sub.getSubscription());
+
+                            this.sellerService.addSubscription(sub, customer.getEmail());
+                        } catch (Exception e) {
+                            log.error("Customer alreday exist in data base");
+                        }
+
+                        log.info("PaymentIntent was successful!");
+                        break;
+                    case "payment_method.attached":
+                        // PaymentMethod attached
+                        System.out.println("PaymentMethod was attached to a Customer!");
+                        break;
+                    default:
+                        System.out.println("Unhandled event type: " + event.getType());
+                        break;
+                }
+            } else {
+                log.error("Error while making the event object serialization");
+            }
+            // stripeObject.toJson();
+            // Handle the event
+
+            return ResponseEntity.ok().build();
+        } catch (SignatureVerificationException e) {
+            log.error("Error : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            log.error("Error : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

@@ -8,7 +8,7 @@ import com.lawstack.app.model.SellerRequest;
 
 public interface SellerRequestService {
     
-    SellerRequest requestForSeller(String sellerInfo,MultipartFile profilePictre,MultipartFile document ); 
+    SellerRequest requestForSeller(String sellerInfo,MultipartFile document ); 
     
     SellerRequest fetchRequestBySellerId(String sellerId);
     

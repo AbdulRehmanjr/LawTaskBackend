@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.lawstack.app.configuration.jwt.JwtAuthenticationEntryPoint;
@@ -39,7 +39,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     private UserDetailServiceImp userDetailService;
 
-    final private String origin = "http://localhost:4200";
+    final private String[] origin = {"http://localhost:4200","https://checkout.stripe.com"};
 
     @Bean
     AuthenticationProvider authenticationProvider() {
@@ -88,7 +88,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     
    
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(origin));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
@@ -97,6 +97,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         configuration.setExposedHeaders(Arrays.asList("x-Auth-Token","Acess-Control-Allow-Origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        return source;
+        return new CorsFilter(source);
     }
 }

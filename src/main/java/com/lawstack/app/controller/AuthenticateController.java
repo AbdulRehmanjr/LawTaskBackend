@@ -53,7 +53,7 @@ public class AuthenticateController {
     @PostMapping("/generate")
     public ResponseEntity<?> generateToken(@RequestBody JwtRequest request) {
         
-        log.info("Request for generating token. by user {}", request.getUserEmail());
+        //log.info("Request for generating token. by user {}", request.getUserEmail());
         try {
             authentication(request.getUserEmail(), request.getPassword());
         } catch (Exception e) {

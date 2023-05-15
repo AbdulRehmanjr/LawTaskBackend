@@ -28,6 +28,8 @@ public class Seller {
     
     private boolean active=false;
 
+    private String email;
+
     public String getSellerId() {
         return sellerId;
     }
@@ -74,6 +76,14 @@ public class Seller {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     

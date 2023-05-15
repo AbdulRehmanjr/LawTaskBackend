@@ -36,11 +36,10 @@ public class SellerRequestController {
      */
     @PostMapping("/request")
     ResponseEntity<?> requestSeller(@RequestParam("seller") String user,
-            @RequestParam("profilePicture") MultipartFile profilePictre,
             @RequestParam("document") MultipartFile document) {
         log.info("/POST : Request for seller account");
 
-        SellerRequest seller = this.sellerService.requestForSeller(user, profilePictre, document);
+        SellerRequest seller = this.sellerService.requestForSeller(user,document);
 
         if (seller == null) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error in saving the seller provided data.");

@@ -16,7 +16,7 @@ public interface SellerService {
 
     Seller getSellerByUserId(String userId);
 
-    Seller addSubscription(CardSubscription card);
+    Seller addSubscription(CardSubscription card,String email);
 
     Seller updateJobStatus(Seller seller);
 }

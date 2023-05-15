@@ -39,7 +39,7 @@ public class SellerRequestServiceImp  implements SellerRequestService{
      * ! May be got some changes in future versions
      */
     @Override
-    public SellerRequest requestForSeller(String sellerInfo, MultipartFile profilePictre, MultipartFile document) {
+    public SellerRequest requestForSeller(String sellerInfo,MultipartFile document) {
         
         log.info("Saving Seller Request Data in database");
 
@@ -56,7 +56,6 @@ public class SellerRequestServiceImp  implements SellerRequestService{
         }   
         //* Adding profile Picture and Document to Seller JSON */
         try {
-            seller.setProfilePicture(profilePictre.getBytes());
             seller.setDocument(document.getBytes());
             seller.setDocumentName(document.getOriginalFilename());
             seller.setDocumentType(document.getContentType());
