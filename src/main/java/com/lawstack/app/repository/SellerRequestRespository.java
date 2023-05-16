@@ -12,7 +12,5 @@ public interface SellerRequestRespository extends JpaRepository<SellerRequest,St
     SellerRequest findByUserId(String userId);
 
     List<SellerRequest> findAllByisActiveFalse();
-
-    List<SellerRequest> findAllByLocationAndSkillsIn(String location,List<String> skills);
     
 }

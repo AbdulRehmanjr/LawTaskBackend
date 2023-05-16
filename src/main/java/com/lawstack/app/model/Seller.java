@@ -1,6 +1,8 @@
 package com.lawstack.app.model;
 
 
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
@@ -17,7 +19,7 @@ public class Seller {
     @OneToOne
     private User user;
 
-    
+
     private int currentJobs = 0;
 
     
@@ -29,6 +31,7 @@ public class Seller {
     private boolean active=false;
 
     private String email;
+
 
     public String getSellerId() {
         return sellerId;

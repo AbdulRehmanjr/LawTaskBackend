@@ -18,9 +18,12 @@ public class Subscription {
 
     private String customerId;
 
-    @Column(unique = true)
     private String email;
 
+    @Column(unique=true)
+    private String subscriptionId;
+
+    private String discountId;
     
 
     @CreationTimestamp
@@ -48,6 +51,30 @@ public class Subscription {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public String getDiscountId() {
+        return discountId;
+    }
+
+    public void setDiscountId(String discountId) {
+        this.discountId = discountId;
     }
 
 }

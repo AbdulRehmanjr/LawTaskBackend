@@ -39,6 +39,7 @@ public class SellerRequestController {
             @RequestParam("document") MultipartFile document) {
         log.info("/POST : Request for seller account");
 
+        log.info("Seller {}",user);
         SellerRequest seller = this.sellerService.requestForSeller(user,document);
 
         if (seller == null) {

@@ -24,7 +24,7 @@ public class SubscriptionServiceImp implements SubscriptionService{
 
 
     @Override
-    public Subscription addCustomer(String email,String customerId) {
+    public Subscription addCustomer(String email,String customerId,String SubscriptionId,String DiscountId) {
         
         log.info("Saving a new Subscription in database");
 
@@ -35,6 +35,8 @@ public class SubscriptionServiceImp implements SubscriptionService{
         sub.setSubId(id);
         sub.setCustomerId(customerId);
         sub.setEmail(email);
+        sub.setSubscriptionId(SubscriptionId);
+        sub.setDiscountId(DiscountId);
 
         try {
             sub = this.subRepo.save(sub);
@@ -57,16 +59,15 @@ public class SubscriptionServiceImp implements SubscriptionService{
 
     @Override
     public Customer retrievCustomer(String id) {
+        Customer customer = null;
         try {
-            Customer customer = Customer.retrieve(id);
-
-            this.addCustomer(customer.getEmail(), customer.getId());
+             customer = Customer.retrieve(id);
             return customer;
         } catch (StripeException e) {
            log.error("Error: {}",e.getMessage());
         
         }
-        return null;
+        return customer;
     }
     
     

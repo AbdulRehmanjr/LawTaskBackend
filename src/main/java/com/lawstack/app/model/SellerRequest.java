@@ -1,9 +1,12 @@
 package com.lawstack.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,10 +26,14 @@ public class SellerRequest {
     private boolean isActive=false;
     private int charges;
     private String jobName;
-    private String[] skills;
     private String tagLine;
     private String location;
     private String description;
+
+    
+    @JsonIgnore
+    @OneToOne(mappedBy = "seller")
+    private Freelancer freelancer;
 
     @Lob
     @Column(columnDefinition = "LONGBLOB")
@@ -84,13 +91,6 @@ public class SellerRequest {
         this.jobName = jobName;
     }
 
-    public String[] getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String[] skills) {
-        this.skills = skills;
-    }
 
     public String getTagLine() {
         return tagLine;

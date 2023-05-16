@@ -28,6 +28,8 @@ public class Job {
 
     private Double views =0.0;
 
+    private String jobType;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
@@ -93,5 +95,13 @@ public class Job {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
     }
 }

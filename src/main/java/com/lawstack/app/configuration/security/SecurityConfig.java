@@ -73,7 +73,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
                         .requestMatchers("/user/auth").hasAuthority("ADMIN")
                         .requestMatchers("/role/**", "/token/**", "/user/**", "/seller/**", "/sellerrequest/**",
-                                "/job/**","/checkout/**", "/chat/**", "/ws/**", "/userChat/**","/app/**","/chatlist/**")
+                                "/job/**","/checkout/**", "/chat/**", "/ws/**","/freelancer/**", "/userChat/**","/app/**","/chatlist/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)

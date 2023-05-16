@@ -156,6 +156,7 @@ public class SellerRequestServiceImp  implements SellerRequestService{
 
             Seller.setUser(user);
             Seller.setActive(false);
+            Seller.setEmail(seller.getEmail());
             
             this.sellerService.createSeller(Seller);
             this.userService.updateUserRole(seller.getUserId());

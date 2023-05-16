@@ -7,7 +7,7 @@ import com.stripe.model.Customer;
 public interface SubscriptionService {
     
     
-    Subscription addCustomer(String email,String customerId);
+    Subscription addCustomer(String email,String customerId,String SubscrptionId,String DiscountId);
 
     Subscription getCustomerByEmail(String email);
 

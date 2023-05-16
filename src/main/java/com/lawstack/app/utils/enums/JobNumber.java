@@ -3,9 +3,9 @@ package com.lawstack.app.utils.enums;
 
 public enum JobNumber {
     
-    NORMAL(3),
-    EXPERT(6),
-    PRO(12);
+    DEWDROPPER(3),
+    SPRINKLE(6),
+    RAINMAKER(12);
 
     private final int value;
 

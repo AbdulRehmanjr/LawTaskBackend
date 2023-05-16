@@ -26,9 +26,6 @@ public class SellerServiceImp implements SellerService {
     @Autowired
     private UserService userService;
 
-    private final static String NORMAL ="NORMAL";
-    private final static String EXPERT = "EXPERT";
-    private final static String PRO = "PRO";
 
     /**
      * @implSpec create a new seller
@@ -90,8 +87,17 @@ public class SellerServiceImp implements SellerService {
             log.error("Seller may not exist with given email.");
             return null;
         }
+
+        if(card.getSubscription().equals("Dew Dropper")){
+            seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
+        }else if(card.getSubscription().equals("Sprinkle Starter")){
+            seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
+        }else if(card.getSubscription().equals("Rain Maker")){
+            seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
+        }
+        
         seller.setActive(true);
-        seller.setMaxJobs(JobNumber.valueOf(card.getSubscription()).getValue());
+        
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
         return seller;

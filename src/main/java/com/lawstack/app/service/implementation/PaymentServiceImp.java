@@ -75,8 +75,6 @@ public class PaymentServiceImp implements PaymentService {
                                 .setPrice(Tag)
                                 .build())
                 .build();
-
-        this.subService.addCustomer(email, customer.getId());
         Session session;
 
         try {

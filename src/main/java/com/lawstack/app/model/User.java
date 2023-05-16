@@ -45,6 +45,8 @@ public class User {
     @JsonIgnore
     private List<Job> job;
 
+   
+
     public String getUserId() {
         return userId;
     }

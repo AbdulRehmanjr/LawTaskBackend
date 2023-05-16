@@ -9,7 +9,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-
 import com.lawstack.app.model.Chat;
 import com.lawstack.app.service.MessageService;
 
@@ -45,6 +44,7 @@ public class MessageController {
         try {
             this.messageService.saveMessages(message);
             message.setType("RECEIVER");
+            log.info("message",message);
             smt.convertAndSendToUser(message.getSenderName(), "/private", message);    
 
         } catch (Exception e) {
@@ -53,4 +53,5 @@ public class MessageController {
         
         return message;
     }
+
 }
