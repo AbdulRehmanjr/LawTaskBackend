@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Role;
 import com.lawstack.app.model.User;
+import com.lawstack.app.model.UserJoin;
 import com.lawstack.app.repository.RoleRepository;
 import com.lawstack.app.repository.UserRespository;
+import com.lawstack.app.service.DashboardService;
+import com.lawstack.app.service.EmailService;
+import com.lawstack.app.service.SellerAndUserJoinService;
 import com.lawstack.app.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +37,16 @@ public class UserServiceImp implements UserService {
     @Autowired
     private PasswordEncoder encoder;
 
+
+    @Autowired
+    private SellerAndUserJoinService userJoinService;
+
+    @Autowired
+    private DashboardService dashboardService;
+
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public User saveUser(User user) {
 
@@ -49,7 +64,14 @@ public class UserServiceImp implements UserService {
         user.setRole(role);
         user.setPassword(encoder.encode(user.getPassword()));
         User saved = this.userRepo.save(user);
+        String message = "Thanks! "+user.getEmail()+" for registration on our website.";
+        this.emailService.sendMail(user.getEmail(),"Registration", message);
 
+        this.userJoinService.saveUserJoin(id);
+        Dashboard info = new Dashboard();
+        info.setUsers(1);
+        this.dashboardService.updateDashboard(info);
+        
         return saved;
 
     }

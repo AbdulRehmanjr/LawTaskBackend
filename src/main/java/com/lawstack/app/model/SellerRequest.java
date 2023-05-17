@@ -2,15 +2,17 @@ package com.lawstack.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="SELLERREQUESTTABLE")
+@Table(name="SELLERREQUESTSTABLE")
 public class SellerRequest {
     
     @Id
@@ -18,6 +20,7 @@ public class SellerRequest {
 
     private String firstName;
     private String lastName;
+    
     private String userId;
 
     @Column(unique = true)
@@ -43,6 +46,9 @@ public class SellerRequest {
 
     private String documentName;
 
+    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL)
+    private User user;
+    
     public String getSellerId() {
         return sellerId;
     }
@@ -156,6 +162,22 @@ public class SellerRequest {
 
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Freelancer getFreelancer() {
+        return freelancer;
+    }
+
+    public void setFreelancer(Freelancer freelancer) {
+        this.freelancer = freelancer;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
 

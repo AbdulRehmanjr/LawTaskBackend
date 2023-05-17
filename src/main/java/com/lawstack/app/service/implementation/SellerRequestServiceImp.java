@@ -10,10 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawstack.app.model.Freelancer;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.SellerRequest;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.SellerRequestRespository;
+import com.lawstack.app.service.EmailService;
+import com.lawstack.app.service.FreelancerService;
 import com.lawstack.app.service.SellerRequestService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.UserService;
@@ -32,6 +35,15 @@ public class SellerRequestServiceImp  implements SellerRequestService{
 
     @Autowired
     private SellerService sellerService;
+
+    @Autowired
+    private FreelancerService freelancerService;
+
+    @Autowired
+    private EmailService emailService;
+
+    
+    
 
     /**
      * @implSpec This will do necessary checks and forward request for processing
@@ -67,8 +79,20 @@ public class SellerRequestServiceImp  implements SellerRequestService{
         
         try {
             seller.setSellerId(id);
-            log.info(seller.getUserId());
+            
+            User user= this.userService.getUserById(seller.getUser().getUserId());
+
+            seller.setUser(user);
+
             seller = this.sellerRepo.save(seller);
+            
+            Freelancer freelancer = new Freelancer();
+
+            freelancer.setSeller(seller);
+
+            this.freelancerService.saveFreelancer(freelancer);
+           
+           this.emailService.sendMail(user.getEmail(), "To Become a Seller", "Your Request to become Seller has been forwrded to admin please wait for their response.");
         } catch (Exception e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
@@ -101,7 +125,7 @@ public class SellerRequestServiceImp  implements SellerRequestService{
     public SellerRequest fetchRequestByUserId(String userId) {
         log.info("Fetch the request by userId");
 
-        SellerRequest seller = this.sellerRepo.findByUserId(userId);
+        SellerRequest seller = this.sellerRepo.findByUserUserId(userId);
 
         if(seller==null){
             log.info("Seller not found with given userId {}",userId);
@@ -150,19 +174,22 @@ public class SellerRequestServiceImp  implements SellerRequestService{
             seller.setActive(true);
 
             Seller Seller = new Seller();
-            User user = new User();
-
-            user.setUserId(seller.getUserId());
+            User user = this.userService.getUserById(seller.getUser().getUserId());
 
             Seller.setUser(user);
             Seller.setActive(false);
             Seller.setEmail(seller.getEmail());
             
             this.sellerService.createSeller(Seller);
-            this.userService.updateUserRole(seller.getUserId());
+            this.userService.updateUserRole(user.getUserId());
         }
         
         return seller;
+    }
+    @Override
+    public List<SellerRequest> fetchApprovedSellerRequests() {
+        log.info("Fetching all the approved Requests");
+        return this.sellerRepo.findAllByisActiveTrue();
     }
 
 

@@ -1,6 +1,7 @@
 package com.lawstack.app.model;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -27,7 +28,9 @@ public class Subscription {
     
 
     @CreationTimestamp
-    private Date time;
+    private Date DateSubcribed;
+
+    private LocalDate DateValid;
 
     public String getSubId() {
         return subId;
@@ -61,20 +64,29 @@ public class Subscription {
         this.subscriptionId = subscriptionId;
     }
 
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
     public String getDiscountId() {
         return discountId;
     }
 
     public void setDiscountId(String discountId) {
         this.discountId = discountId;
+    }
+
+    public Date getDateSubcribed() {
+        return DateSubcribed;
+    }
+
+    public void setDateSubcribed(Date dateSubcribed) {
+        DateSubcribed = dateSubcribed;
+    }
+
+
+    public void setDateValid(LocalDate dateValid) {
+        DateValid = dateValid;
+    }
+
+    public LocalDate getDateValid() {
+        return DateValid;
     }
 
 }

@@ -130,7 +130,7 @@ public class PaymentServiceImp implements PaymentService {
 
     private Coupon creatCoupon() {
         try {
-            BigDecimal off = new BigDecimal("20");
+            BigDecimal off = new BigDecimal("2");
             CouponCreateParams params = CouponCreateParams.builder()
                     .setPercentOff(off)
                     .setDuration(CouponCreateParams.Duration.ONCE)

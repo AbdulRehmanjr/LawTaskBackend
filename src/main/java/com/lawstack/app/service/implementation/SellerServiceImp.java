@@ -7,9 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lawstack.app.model.CardSubscription;
+import com.lawstack.app.model.Dashboard;
+
 import com.lawstack.app.model.Seller;
+
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.SellerRepository;
+
+import com.lawstack.app.service.DashboardService;
+
+import com.lawstack.app.service.SellerAndUserJoinService;
+
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.UserService;
 import com.lawstack.app.utils.enums.JobNumber;
@@ -26,6 +34,11 @@ public class SellerServiceImp implements SellerService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SellerAndUserJoinService sellerJoinService;
+
+    @Autowired
+    private DashboardService dashboardService;
 
     /**
      * @implSpec create a new seller
@@ -46,10 +59,13 @@ public class SellerServiceImp implements SellerService {
         String id = UUID.randomUUID().toString();
         seller.setSellerId(id);
         seller.setUser(user);
-        
-       
-        
+
         this.sellerRepo.save(seller);
+
+        this.sellerJoinService.saveUserJoin(id);
+        Dashboard info = new Dashboard();
+        info.setSellers(1);
+        this.dashboardService.updateDashboard(info);
 
         return seller;
     }
@@ -80,40 +96,39 @@ public class SellerServiceImp implements SellerService {
     }
 
     @Override
-    public Seller addSubscription(CardSubscription card,String email) {
+    public Seller addSubscription(CardSubscription card, String email) {
 
         Seller seller = this.sellerRepo.findByEmail(email);
-        if(seller ==null){
+        if (seller == null) {
             log.error("Seller may not exist with given email.");
             return null;
         }
 
-        if(card.getSubscription().equals("Dew Dropper")){
+        if (card.getSubscription().equals("Dew Dropper")) {
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
-        }else if(card.getSubscription().equals("Sprinkle Starter")){
+        } else if (card.getSubscription().equals("Sprinkle Starter")) {
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
-        }else if(card.getSubscription().equals("Rain Maker")){
+        } else if (card.getSubscription().equals("Rain Maker")) {
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
         }
-        
+
         seller.setActive(true);
-        
+
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
+
         return seller;
     }
 
     @Override
     public Seller updateJobStatus(Seller seller) {
-       log.info("Update the job status");
-       Seller response = this.sellerRepo.findByUserUserId(seller.getUser().getUserId());
+        log.info("Update the job status");
+        Seller response = this.sellerRepo.findByUserUserId(seller.getUser().getUserId());
 
-       if(response==null){
-        return null;
-       }
-       return this.sellerRepo.save(seller);
+        if (response == null) {
+            return null;
+        }
+        return this.sellerRepo.save(seller);
     }
-
-    
 
 }

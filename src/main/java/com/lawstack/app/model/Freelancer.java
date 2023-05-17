@@ -1,6 +1,7 @@
 package com.lawstack.app.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -12,7 +13,7 @@ public class Freelancer {
     @Id
     private String id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private SellerRequest seller;
 
     private double rating = 0;

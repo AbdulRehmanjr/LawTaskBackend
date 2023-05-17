@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.PaymentRequest;
-
+import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
@@ -47,6 +47,9 @@ public class CheckoutController {
 
     @Autowired
     private SellerService sellerService;
+
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/create-checkout-session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody PaymentRequest payment) {
@@ -133,6 +136,8 @@ public class CheckoutController {
                                     this.sellerService.addSubscription(card, customerEmail);
 
                                     this.subService.addCustomer(customerEmail, customerId, subscriptionId, discountId);
+
+                                    this.emailService.sendMail(customerEmail, "Purchase of Subscription", "Thanks for purchasing the subscription please visit your dashboard to add jobs.");
                                 }
                             } catch (StripeException e) {
                                 // Handle any Stripe API errors

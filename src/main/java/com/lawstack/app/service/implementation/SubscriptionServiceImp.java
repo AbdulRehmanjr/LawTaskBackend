@@ -1,5 +1,6 @@
 package com.lawstack.app.service.implementation;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class SubscriptionServiceImp implements SubscriptionService{
         sub.setEmail(email);
         sub.setSubscriptionId(SubscriptionId);
         sub.setDiscountId(DiscountId);
+
+        LocalDate valid = LocalDate.now().plusDays(30);
+        sub.setDateValid(valid);
 
         try {
             sub = this.subRepo.save(sub);

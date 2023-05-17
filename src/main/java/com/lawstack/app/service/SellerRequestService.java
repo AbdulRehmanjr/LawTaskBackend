@@ -12,6 +12,7 @@ public interface SellerRequestService {
     
     SellerRequest fetchRequestBySellerId(String sellerId);
     
+    List<SellerRequest> fetchApprovedSellerRequests();
     SellerRequest fetchRequestByUserId(String userId);
     
     List<SellerRequest> getAllRequest();

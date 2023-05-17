@@ -45,8 +45,10 @@ public class User {
     @JsonIgnore
     private List<Job> job;
 
-   
-
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private SellerRequest sellerRequest;
+    
     public String getUserId() {
         return userId;
     }

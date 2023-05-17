@@ -87,7 +87,18 @@ public class SellerRequestController {
         }
         return sellers;
     }
+    @GetMapping("/accepted")
+    ResponseEntity<List<SellerRequest>> appectedRequests() {
 
+        log.info("Fetching all approved users");
+
+        List<SellerRequest> sellers = this.sellerService.fetchApprovedSellerRequests();
+
+        if (sellers==null) {
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.status(201).body(sellers);
+    }
     @PostMapping("/accept/{sellerId}")
     ResponseEntity<?> acceptRequest(@PathVariable String sellerId) {
 

@@ -9,8 +9,10 @@ import com.lawstack.app.model.SellerRequest;
 
 public interface SellerRequestRespository extends JpaRepository<SellerRequest,String>{
      
-    SellerRequest findByUserId(String userId);
+    SellerRequest findByUserUserId(String userId);
 
     List<SellerRequest> findAllByisActiveFalse();
+
+    List<SellerRequest> findAllByisActiveTrue();
     
 }
