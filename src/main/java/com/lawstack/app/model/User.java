@@ -48,7 +48,12 @@ public class User {
     @JsonIgnore
     @OneToOne(mappedBy = "user")
     private SellerRequest sellerRequest;
-    
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
+   
     public String getUserId() {
         return userId;
     }

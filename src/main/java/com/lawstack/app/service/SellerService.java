@@ -1,5 +1,6 @@
 package com.lawstack.app.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.lawstack.app.model.CardSubscription;
@@ -16,7 +17,7 @@ public interface SellerService {
 
     Seller getSellerByUserId(String userId);
 
-    Seller addSubscription(CardSubscription card,String email);
+    Seller addSubscription(CardSubscription card,String email,long amount);
 
     Seller updateJobStatus(Seller seller);
 }

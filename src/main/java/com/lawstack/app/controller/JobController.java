@@ -71,13 +71,13 @@ public class JobController {
         try {
             if(jobs.isEmpty()==true){
                 log.info("jobs is empty "); 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(404).body(null);
             }    
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(404).body(null);
         }
         
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(jobs);
+        return ResponseEntity.status(201).body(jobs);
     }
 
     @GetMapping("/search")

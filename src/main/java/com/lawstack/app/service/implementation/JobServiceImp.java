@@ -6,10 +6,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Job;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.JobsRepository;
+import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.JobService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.UserService;
@@ -29,6 +31,9 @@ public class JobServiceImp  implements JobService{
 
     @Autowired
     private SellerService sellerService;
+
+    @Autowired
+    private DashboardService dashService;
 
     @Override
     public Job createJob(Job job) {
@@ -58,7 +63,11 @@ public class JobServiceImp  implements JobService{
         Job response = this.jobRepo.save(job);
         
         if(response!=null){
-            this.sellerService.updateJobStatus(seller);   
+            this.sellerService.updateJobStatus(seller);  
+            Dashboard dashboard = new Dashboard();
+
+            dashboard.setJobs(1);
+            this.dashService.updateDashboard(dashboard);
             return job; 
         }
         return null;

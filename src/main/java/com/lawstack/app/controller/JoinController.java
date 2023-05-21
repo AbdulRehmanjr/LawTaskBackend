@@ -26,6 +26,7 @@ public class JoinController {
     @GetMapping("/users")
     ResponseEntity<?> getAllUsers(){
 
+        log.info("Geting the user join info");
         List<UserJoin> userJoins = this.saujService.getAllUsers();
 
 
@@ -39,7 +40,8 @@ public class JoinController {
 
     @GetMapping("/sellers")
     ResponseEntity<?> getAllSellers(){
-
+    
+        log.info("Geting the sellers join info");
         List<SellerJoin> sellerJoins = this.saujService.getAllSellers();
 
 

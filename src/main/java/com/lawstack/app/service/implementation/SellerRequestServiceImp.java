@@ -10,13 +10,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Freelancer;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.SellerRequest;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.SellerRequestRespository;
+import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.FreelancerService;
+import com.lawstack.app.service.SellerAndUserJoinService;
 import com.lawstack.app.service.SellerRequestService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.UserService;
@@ -41,6 +44,13 @@ public class SellerRequestServiceImp  implements SellerRequestService{
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private DashboardService dashboardService;
+
+    @Autowired
+    private SellerAndUserJoinService sellerJoinService;
+    
 
     
     
@@ -93,6 +103,12 @@ public class SellerRequestServiceImp  implements SellerRequestService{
             this.freelancerService.saveFreelancer(freelancer);
            
            this.emailService.sendMail(user.getEmail(), "To Become a Seller", "Your Request to become Seller has been forwrded to admin please wait for their response.");
+
+           Dashboard dash = new Dashboard();
+           dash.setSellers(1);
+           this.dashboardService.updateDashboard(dash);
+
+           this.sellerJoinService.saveSellerJoin(seller.getUser().getUserId());
         } catch (Exception e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
@@ -182,6 +198,8 @@ public class SellerRequestServiceImp  implements SellerRequestService{
             
             this.sellerService.createSeller(Seller);
             this.userService.updateUserRole(user.getUserId());
+            
+            this.emailService.sendMail(Seller.getEmail(), "Seller Request Approval", "Your Request has been approved by the user");
         }
         
         return seller;

@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.ChatUserList;
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Role;
 import com.lawstack.app.model.User;
-import com.lawstack.app.model.UserJoin;
 import com.lawstack.app.repository.RoleRepository;
 import com.lawstack.app.repository.UserRespository;
+import com.lawstack.app.service.ChatUserListService;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.SellerAndUserJoinService;
@@ -36,7 +37,6 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private PasswordEncoder encoder;
-
 
     @Autowired
     private SellerAndUserJoinService userJoinService;
@@ -71,9 +71,8 @@ public class UserServiceImp implements UserService {
         Dashboard info = new Dashboard();
         info.setUsers(1);
         this.dashboardService.updateDashboard(info);
-        
-        return saved;
 
+        return saved;
     }
     @Override
     public User saveAdmin(User user) {

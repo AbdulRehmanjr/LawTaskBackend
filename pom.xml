@@ -57,9 +57,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
-		<!--
-For detailed setup, see our quickstart at https://stripe.com/docs/development/quickstart
--->
+		
 		<dependency>
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
@@ -92,11 +90,7 @@ For detailed setup, see our quickstart at https://stripe.com/docs/development/qu
 			<artifactId>lombok</artifactId>
 			<scope>annotationProcessor</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.corundumstudio.socketio</groupId>
-			<artifactId>netty-socketio</artifactId>
-			<version>1.7.22</version>
-		</dependency>
+		
 
 
 		<dependency>

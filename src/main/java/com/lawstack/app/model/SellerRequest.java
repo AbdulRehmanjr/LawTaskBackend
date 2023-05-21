@@ -21,7 +21,6 @@ public class SellerRequest {
     private String firstName;
     private String lastName;
     
-    private String userId;
 
     @Column(unique = true)
     private String email;
@@ -128,16 +127,6 @@ public class SellerRequest {
 
     public void setDocument(byte[] document) {
         this.document = document;
-    }
-
-
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getDocumentType() {

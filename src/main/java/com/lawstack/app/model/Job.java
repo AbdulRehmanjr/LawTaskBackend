@@ -1,11 +1,14 @@
 package com.lawstack.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,8 +33,12 @@ public class Job {
 
     private String jobType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @OneToOne(mappedBy = "job")
+    @JsonIgnore
+    private Order order;
 
     public String getJobId() {
         return jobId;

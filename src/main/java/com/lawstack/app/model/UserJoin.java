@@ -22,7 +22,7 @@ public class UserJoin {
     private String userId;
 
     @CreationTimestamp
-    private Date date;
+    private Date joinDate;
 
     public int getId() {
         return id;
@@ -40,11 +40,11 @@ public class UserJoin {
         this.userId = userId;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getJoinDate() {
+        return joinDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setJoinDate(Date joinDate) {
+        this.joinDate = joinDate;
     }
 }

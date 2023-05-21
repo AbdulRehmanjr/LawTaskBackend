@@ -53,7 +53,7 @@ public class ChatUserListController {
         ChatUserList user = this.culService.addUserToChatList(userId,receiverId);
 
         if(user==null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+            return ResponseEntity.status(401).body(null);
         }
         return ResponseEntity.status(201).body(user);
     }

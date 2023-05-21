@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.Order;
+import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.model.Subscription;
+import com.lawstack.app.service.OrderPaymentService;
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SubscriptionService;
 import com.stripe.Stripe;
@@ -40,6 +43,10 @@ public class PaymentServiceImp implements PaymentService {
     @Value("${Product_3}")
     private String rainString;
 
+
+    @Autowired
+    private OrderPaymentService orderPaymentService;
+
    
 
     @PostConstruct
@@ -53,7 +60,7 @@ public class PaymentServiceImp implements PaymentService {
         String Tag = this.getPriceToken(type);
 
         Customer customer = checkAndCreateCustomer(email);
-        Coupon coupon = creatCoupon();
+        Coupon coupon = createCoupon();
 
         if(customer==null ||coupon==null){
             return null;
@@ -88,6 +95,54 @@ public class PaymentServiceImp implements PaymentService {
 
     }
 
+    @Override
+    public String projectPayment(Order order) {
+        String YOUR_DOMAIN = "http://localhost:4200";
+
+        Customer customer = checkAndCreateCustomer(order.getCustomerEmail(),order.getCustomerName());
+        long price = (long)(order.getPrice()*100);
+        SessionCreateParams params =
+        SessionCreateParams.builder()
+          .setMode(SessionCreateParams.Mode.PAYMENT)
+          .setSuccessUrl("http://localhost:4200/home/messages")
+          .setCancelUrl("http://localhost:4200/home/messages")
+          .setCustomer(customer.getId())
+          .addLineItem(
+          SessionCreateParams.LineItem.builder()
+            .setQuantity(1L)
+            .setPriceData(
+              SessionCreateParams.LineItem.PriceData.builder()
+                .setCurrency("usd")
+                .setUnitAmount(price)
+                .setProductData(
+                  SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                    .setName(order.getJob().getJobName())
+                    .build())
+                .build())
+            .build())
+          .build();
+        Session session;
+
+        try {
+            session = Session.create(params);
+
+            OrderPayment pay = new OrderPayment();
+            pay.setCustomerId(order.getCustomerId());
+            pay.setStripeId(customer.getId());
+            pay.setEmail(order.getCustomerEmail());
+            pay.setName(order.getCustomerName());
+            pay.setJobId(order.getJob().getJobId());
+            pay.setSellerId(order.getJob().getJobId());
+            pay.setPrice(order.getPrice());
+            this.orderPaymentService.saveOrderPayment(pay);
+
+            return session.getUrl();
+        } catch (StripeException e) {
+
+            log.info("ERROR: {}", e.getMessage());
+            return null;
+        }
+    }
     private String getPriceToken(String type) {
 
         if (type.equalsIgnoreCase("Dew")) {
@@ -99,6 +154,35 @@ public class PaymentServiceImp implements PaymentService {
         }
     }
 
+    private Customer checkAndCreateCustomer(String email,String name) {
+
+        Subscription sub = this.subService.getCustomerByEmail(email);
+
+        if (sub == null) {
+            try {
+                CustomerCreateParams params = CustomerCreateParams.builder()
+                        .setEmail(email)
+                        .setName(name)
+                        .build();
+                Customer customer = Customer.create(params);
+                
+                return customer;
+            } catch (StripeException e) {
+                log.error("Error : {}", e.getMessage());
+                return null;
+            }
+        }
+        try {
+            log.info("retriving");
+            Customer customer = Customer.retrieve(sub.getCustomerId());
+
+            return customer;
+        } catch (StripeException e) {
+            log.error("Error : {}", e.getMessage());
+            return null;
+        }
+
+    }
     private Customer checkAndCreateCustomer(String email) {
 
         Subscription sub = this.subService.getCustomerByEmail(email);
@@ -128,7 +212,7 @@ public class PaymentServiceImp implements PaymentService {
 
     }
 
-    private Coupon creatCoupon() {
+    private Coupon createCoupon() {
         try {
             BigDecimal off = new BigDecimal("2");
             CouponCreateParams params = CouponCreateParams.builder()
@@ -145,5 +229,7 @@ public class PaymentServiceImp implements PaymentService {
             return null;
         }
     }
+
+  
     
 }

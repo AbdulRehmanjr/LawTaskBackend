@@ -4,11 +4,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lawstack.app.model.CardSubscription;
+import com.lawstack.app.model.Dashboard;
+import com.lawstack.app.model.Order;
+import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.model.PaymentRequest;
+import com.lawstack.app.model.User;
 import com.lawstack.app.service.EmailService;
+import com.lawstack.app.service.OrderPaymentService;
+import com.lawstack.app.service.OrderService;
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
+import com.lawstack.app.service.UserService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -49,6 +56,12 @@ public class CheckoutController {
     private SellerService sellerService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private OrderPaymentService oPaymentService;
+
+    @Autowired
     private EmailService emailService;
 
     @PostMapping("/create-checkout-session")
@@ -57,6 +70,22 @@ public class CheckoutController {
         log.info("Request for checkout page recived");
 
         String s = this.paymentService.paymentCheckout(payment.getType(), payment.getEmail());
+
+        if (s != null) {
+
+            return ResponseEntity.status(201).body(s);
+        }
+
+        return ResponseEntity.status(404).body(null);
+
+    }
+
+    @PostMapping("/project")
+    public ResponseEntity<?> projectSession(@RequestBody Order order) {
+
+        log.info("Request for checkout page recived");
+
+        String s = this.paymentService.projectPayment(order);
 
         if (s != null) {
 
@@ -87,12 +116,13 @@ public class CheckoutController {
                     case "payment_intent.succeeded":
 
                         PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-                        // Customer customer = null;
+
+                        Customer pay_Customer = null;
                         try {
                             // * get costomer form database if not exist make new one
-                            // customer = this.subService.retrievCustomer(paymentIntent.getCustomer());
+                            
 
-                            // log.info("customer : {}", customer);
+                            log.info("customer : {}", paymentIntent);
 
                         } catch (Exception e) {
                             log.error("Customer alreday exist in data base");
@@ -108,41 +138,52 @@ public class CheckoutController {
 
                     case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+
+                        log.info("Session: {}",session);
                         if (session != null) {
-                            String customerId = session.getCustomer();
 
-                            try {
-                                Customer customer = Customer.retrieve(customerId);
-                                SubscriptionListParams params = SubscriptionListParams.builder()
-                                        .setCustomer(customerId)
-                                        .build();
-                                SubscriptionCollection subscriptions = Subscription.list(params);
+                            if ("subscription".equals(session.getMode())) {
+                                String customerId = session.getCustomer();
 
-                                for (Subscription subscription : subscriptions.getData()) {
-                                    String subscriptionId = subscription.getId();
-                                    String discountId = subscription.getDiscount() != null
-                                            ? subscription.getDiscount().getId()
-                                            : null;
-                                    Price price = Price
-                                            .retrieve(subscription.getItems().getData().get(0).getPrice().getId());
-                                    Product product = Product.retrieve(price.getProduct());
+                                try {
+                                    Customer customer = Customer.retrieve(customerId);
+                                    SubscriptionListParams params = SubscriptionListParams.builder()
+                                            .setCustomer(customerId)
+                                            .build();
+                                    SubscriptionCollection subscriptions = Subscription.list(params);
+                                    log.info("Subscription: {}", subscriptions);
+                                    for (Subscription subscription : subscriptions.getData()) {
+                                        String subscriptionId = subscription.getId();
+                                        String discountId = subscription.getDiscount() != null
+                                                ? subscription.getDiscount().getId()
+                                                : null;
+                                        Price price = Price
+                                                .retrieve(subscription.getItems().getData().get(0).getPrice().getId());
 
-                                    String customerEmail = customer.getEmail();
+                                        Product product = Product.retrieve(price.getProduct());
+                                        log.info("Product {}", product);
+                                        String customerEmail = customer.getEmail();
 
-                                    // Update the seller info after subscription
-                                    CardSubscription card = new CardSubscription();
-                                    card.setSubscription(product.getName());
+                                        // Update the seller info after subscription
+                                        CardSubscription card = new CardSubscription();
+                                        card.setSubscription(product.getName());
 
-                                    this.sellerService.addSubscription(card, customerEmail);
+                                        this.sellerService.addSubscription(card, customerEmail, price.getUnitAmount());
 
-                                    this.subService.addCustomer(customerEmail, customerId, subscriptionId, discountId);
-
-                                    this.emailService.sendMail(customerEmail, "Purchase of Subscription", "Thanks for purchasing the subscription please visit your dashboard to add jobs.");
+                                        this.subService.addCustomer(customerEmail, customerId, subscriptionId,
+                                                discountId);
+                                        this.emailService.sendMail(customerEmail, "Purchase of Subscription",
+                                                "Thanks for purchasing the subscription please visit your dashboard to add jobs.");
+                                    }
+                                } catch (StripeException e) {
+                                    log.error("ERROR: {} MESSAGE :{}",e.getCause(),e.getMessage());
                                 }
-                            } catch (StripeException e) {
-                                // Handle any Stripe API errors
-                                e.printStackTrace();
+                            } else {
+                                log.info("payment mode {}", session.getCustomer());
+                                log.info("paymeny {}", session.getPaymentIntent());
+                                
                             }
+
                         }
                         break;
 

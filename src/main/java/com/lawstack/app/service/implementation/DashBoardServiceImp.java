@@ -37,12 +37,15 @@ public class DashBoardServiceImp implements DashboardService {
             return null;
 
         if (dashboard.getDewDropper() != 0) {
-            info.setDewDropper(info.getDewDropper());
+            log.info("Got me dew Subscription");
+            info.setDewDropper(info.getDewDropper()+1);
         }
         if (dashboard.getSprinkle() != 0) {
+            log.info("Got me Sprinkle Subscription");
             info.setSprinkle(info.getSprinkle() + 1);
         }
         if (dashboard.getRainmaker() != 0) {
+            log.info("Got me Rain Subscription");
             info.setRainmaker(info.getRainmaker() + 1);
         }
         if (dashboard.getUsers() != 0) {
@@ -52,7 +55,7 @@ public class DashBoardServiceImp implements DashboardService {
             info.setSellers(info.getSellers() + 1);
         }
         if (dashboard.getIncome() != 0.0) {
-            info.setIncome(info.getIncome() + 1);
+            info.setIncome(info.getIncome() + dashboard.getIncome());
         }
 
         if (dashboard.getJobs() != 0) {

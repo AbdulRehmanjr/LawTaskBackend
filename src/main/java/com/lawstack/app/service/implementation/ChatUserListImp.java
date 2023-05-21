@@ -121,7 +121,6 @@ public class ChatUserListImp implements ChatUserListService {
         List<User> users = new ArrayList<>();
         ChatUserList userList = this.culRepo.findByUserId(userId);
 
-        log.info("USER LIST ==> {}", userList.toString());
         userList.getUsersTo().stream().forEach(id -> {
             log.info("User Id to search", id);
             users.add(this.userService.getUserById(id));

@@ -50,11 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 username = this.jwtUtil.extractUsername(jwttoken);
 
             } catch (Exception e) {
-                log.error("Cannot extract username from token or  expirerd token");
+              log.error("Cannot extract username from token or  expirerd token");
             }
 
         } else {
-             log.error("Invalid token, not start with bearer string");
+            log.error("Invalid token, not start with bearer string");
         }
 
         // * validate token
@@ -66,11 +66,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken uPAT = new UsernamePasswordAuthenticationToken(userDetail, null,
                         userDetail.getAuthorities());
                 uPAT.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                log.info("Authenticated user setting security context");
                 SecurityContextHolder.getContext().setAuthentication(uPAT);
             }
         } else {
-            log.error("Token validation error");
+           log.error("Token validation error");
         }
 
         filterChain.doFilter(request, response);

@@ -1,5 +1,6 @@
 package com.lawstack.app.service.implementation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +41,10 @@ public class SellerServiceImp implements SellerService {
     @Autowired
     private DashboardService dashboardService;
 
+    @Autowired
+    private DashboardService dashService;
+
+
     /**
      * @implSpec create a new seller
      * @param Seller seller
@@ -63,10 +68,6 @@ public class SellerServiceImp implements SellerService {
         this.sellerRepo.save(seller);
 
         this.sellerJoinService.saveUserJoin(id);
-        Dashboard info = new Dashboard();
-        info.setSellers(1);
-        this.dashboardService.updateDashboard(info);
-
         return seller;
     }
 
@@ -96,27 +97,37 @@ public class SellerServiceImp implements SellerService {
     }
 
     @Override
-    public Seller addSubscription(CardSubscription card, String email) {
+    public Seller addSubscription(CardSubscription card, String email,long amount) {
 
         Seller seller = this.sellerRepo.findByEmail(email);
         if (seller == null) {
             log.error("Seller may not exist with given email.");
             return null;
         }
+        Dashboard dash = new Dashboard();
 
         if (card.getSubscription().equals("Dew Dropper")) {
+            log.info("geot dew");
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
+            dash.setDewDropper(1);
+            dash.setIncome(amount/100.0);
         } else if (card.getSubscription().equals("Sprinkle Starter")) {
+            log.info("got sprinkle");
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
+            dash.setSprinkle(1);
+            dash.setIncome(amount/100.0);
         } else if (card.getSubscription().equals("Rain Maker")) {
+            log.info("GOt rain");
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
+            dash.setRainmaker(1);
+            dash.setIncome(amount/100.0);
         }
 
         seller.setActive(true);
 
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
-
+        this.dashService.updateDashboard(dash);
         return seller;
     }
 
