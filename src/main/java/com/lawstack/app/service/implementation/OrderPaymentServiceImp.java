@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lawstack.app.model.Order;
+
 import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.repository.OrderPaymentRepository;
 import com.lawstack.app.service.OrderPaymentService;

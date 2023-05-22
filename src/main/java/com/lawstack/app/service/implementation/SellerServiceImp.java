@@ -1,6 +1,6 @@
 package com.lawstack.app.service.implementation;
 
-import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +13,7 @@ import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Seller;
 
 import com.lawstack.app.model.User;
+import com.lawstack.app.model.UserDashboard;
 import com.lawstack.app.repository.SellerRepository;
 
 import com.lawstack.app.service.DashboardService;
@@ -20,6 +21,7 @@ import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.SellerAndUserJoinService;
 
 import com.lawstack.app.service.SellerService;
+import com.lawstack.app.service.UserDashBoardService;
 import com.lawstack.app.service.UserService;
 import com.lawstack.app.utils.enums.JobNumber;
 
@@ -39,7 +41,7 @@ public class SellerServiceImp implements SellerService {
     private SellerAndUserJoinService sellerJoinService;
 
     @Autowired
-    private DashboardService dashboardService;
+    private UserDashBoardService udashService;
 
     @Autowired
     private DashboardService dashService;
@@ -105,28 +107,39 @@ public class SellerServiceImp implements SellerService {
             return null;
         }
         Dashboard dash = new Dashboard();
+        UserDashboard udash = new UserDashboard();
 
+        udash.setEmail(email);
+        udash.setUserId(seller.getUser().getUserId());
         if (card.getSubscription().equals("Dew Dropper")) {
-            log.info("geot dew");
+            log.info("got dew");
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
             dash.setDewDropper(1);
             dash.setIncome(amount/100.0);
+            
+            udash.setSellerType("Dew Dropper");
         } else if (card.getSubscription().equals("Sprinkle Starter")) {
             log.info("got sprinkle");
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
             dash.setSprinkle(1);
             dash.setIncome(amount/100.0);
+
+            udash.setSellerType("Sprinkle Starter");
         } else if (card.getSubscription().equals("Rain Maker")) {
-            log.info("GOt rain");
+            log.info("got rain");
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
             dash.setRainmaker(1);
             dash.setIncome(amount/100.0);
+
+            udash.setSellerType("Rain Maker");
         }
 
         seller.setActive(true);
 
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
+
+        this.udashService.saveDashboard(udash);
         this.dashService.updateDashboard(dash);
         return seller;
     }

@@ -6,16 +6,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Order;
-import com.lawstack.app.model.OrderPayment;
+
 import com.lawstack.app.model.PaymentRequest;
-import com.lawstack.app.model.User;
+import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
-import com.lawstack.app.service.OrderPaymentService;
-import com.lawstack.app.service.OrderService;
+
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
-import com.lawstack.app.service.UserService;
+
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -34,9 +33,10 @@ import com.stripe.param.SubscriptionListParams;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,13 +56,34 @@ public class CheckoutController {
     private SellerService sellerService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderPaymentService oPaymentService;
+    private DashboardService dashService;
 
     @Autowired
     private EmailService emailService;
+
+    private String customerId="";
+
+    @Value("${stripe_webhook}")
+    private String endpointSecret;
+
+    @PostMapping("/cancel/{email}")
+    ResponseEntity<?> cancelSubscription(@PathVariable String email) {
+
+        log.info("Request to cancel the subscrption");
+        String id = this.paymentService.getSubscriptionId(email);
+
+        try {
+            Subscription subscription = Subscription.retrieve(id);
+            this.customerId = subscription.getCustomer();
+            subscription.cancel();
+        } catch (StripeException e) {
+            log.error("Error: {} Message: {}", e.getCause(), e.getMessage());
+            return ResponseEntity.status(404).body(null);
+        }
+        
+        return ResponseEntity.status(201).body("success");
+
+    }
 
     @PostMapping("/create-checkout-session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody PaymentRequest payment) {
@@ -83,7 +104,7 @@ public class CheckoutController {
     @PostMapping("/project")
     public ResponseEntity<?> projectSession(@RequestBody Order order) {
 
-        log.info("Request for checkout page recived");
+        log.info("Request for checkout page received");
 
         String s = this.paymentService.projectPayment(order);
 
@@ -95,8 +116,6 @@ public class CheckoutController {
         return ResponseEntity.status(404).body(null);
 
     }
-
-    private final String endpointSecret = "whsec_dab51112fcb3a579d7ecd42b56f103c1fbbe197877caf3a2b810c7d76f4d14b4";
 
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
@@ -120,7 +139,6 @@ public class CheckoutController {
                         Customer pay_Customer = null;
                         try {
                             // * get costomer form database if not exist make new one
-                            
 
                             log.info("customer : {}", paymentIntent);
 
@@ -139,7 +157,7 @@ public class CheckoutController {
                     case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
 
-                        log.info("Session: {}",session);
+                        log.info("Session: {}", session);
                         if (session != null) {
 
                             if ("subscription".equals(session.getMode())) {
@@ -161,7 +179,7 @@ public class CheckoutController {
                                                 .retrieve(subscription.getItems().getData().get(0).getPrice().getId());
 
                                         Product product = Product.retrieve(price.getProduct());
-                                        log.info("Product {}", product);
+
                                         String customerEmail = customer.getEmail();
 
                                         // Update the seller info after subscription
@@ -176,15 +194,30 @@ public class CheckoutController {
                                                 "Thanks for purchasing the subscription please visit your dashboard to add jobs.");
                                     }
                                 } catch (StripeException e) {
-                                    log.error("ERROR: {} MESSAGE :{}",e.getCause(),e.getMessage());
+                                    log.error("ERROR: {} MESSAGE :{}", e.getCause(), e.getMessage());
                                 }
                             } else {
-                                log.info("payment mode {}", session.getCustomer());
-                                log.info("paymeny {}", session.getPaymentIntent());
-                                
+
+                                PaymentIntent payment = PaymentIntent.retrieve(session.getPaymentIntent());
+                                Dashboard dashboard = new Dashboard();
+
+                                dashboard.setIncome(payment.getAmount() / 100.0);
+                                this.dashService.updateDashboard(dashboard);
                             }
 
                         }
+                        break;
+                    case "customer.subscription.deleted":
+                    
+
+                    try {
+                        Customer response = Customer.retrieve(this.customerId);
+                        
+                        this.subService.deleteSubscription(response.getEmail());
+                    } catch (StripeException e) {
+                        log.error("Error: {} Message: {}", e.getCause(), e.getMessage());
+                    }
+    
                         break;
 
                 }

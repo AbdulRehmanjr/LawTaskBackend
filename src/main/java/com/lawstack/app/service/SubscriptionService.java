@@ -11,5 +11,7 @@ public interface SubscriptionService {
 
     Subscription getCustomerByEmail(String email);
 
+    void deleteSubscription(String email);
+
     Customer retrievCustomer(String id);
 }

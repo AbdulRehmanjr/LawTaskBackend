@@ -10,10 +10,12 @@ import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Job;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.User;
+import com.lawstack.app.model.UserDashboard;
 import com.lawstack.app.repository.JobsRepository;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.JobService;
 import com.lawstack.app.service.SellerService;
+import com.lawstack.app.service.UserDashBoardService;
 import com.lawstack.app.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +37,15 @@ public class JobServiceImp  implements JobService{
     @Autowired
     private DashboardService dashService;
 
+    @Autowired
+    private UserDashBoardService udService;
+
     @Override
     public Job createJob(Job job) {
 
         log.info("Insert new Job  in database");
 
-        final  String userId = job.getUser().getUserId();
+        String userId = job.getUser().getUserId();
         User user = this.userService.getUserById(userId);
 
         if(user==null){
@@ -65,7 +70,11 @@ public class JobServiceImp  implements JobService{
         if(response!=null){
             this.sellerService.updateJobStatus(seller);  
             Dashboard dashboard = new Dashboard();
+            UserDashboard udash = new UserDashboard();
 
+            udash.setJobs(1);
+            udash.setUserId(user.getUserId());
+            this.udService.updateDashboard(udash);
             dashboard.setJobs(1);
             this.dashService.updateDashboard(dashboard);
             return job; 
@@ -83,21 +92,14 @@ public class JobServiceImp  implements JobService{
 
     @Override
     public List<Job> getJobsByUserId(String userId) {
-      log.info("getting all jobs by User id: {}",userId);
+      log.info("Getting all jobs by User id: {}",userId);
         
       List<Job> jobs = this.jobRepo.findAllByUserUserId(userId);
-      try {
-        if(jobs.isEmpty()==true){
-          log.error("Jobs not found");
-          return null;
-        }  
-      } catch (Exception e) {
-        log.error("Error : {}",e.getMessage());
+      
+      if(jobs==null){
         return null;
       }
-      
       return jobs;
-
     }
 
     @Override

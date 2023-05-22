@@ -40,18 +40,20 @@ public class OrderServiceImp implements OrderService{
 
         String id = UUID.randomUUID().toString();
       
-        User user = this.userService.getUserById(order.getUser().getUserId());
-        Job job = this.jobService.getByJobId(order.getJob().getJobId());
+        User existedUser = this.userService.getUserById(order.getUser().getUserId());
+        Job existedJob = this.jobService.getByJobId(order.getJob().getJobId());
 
+        User user = new User();
+        Job job = new Job();
       
-        user.setUserId(user.getUserId());
-        user.setEmail(user.getEmail());
-        user.setUserName(user.getUserName());
+        user.setUserId(existedUser.getUserId());
+        user.setEmail(existedUser.getEmail());
+        user.setUserName(existedUser.getUserName());
         user.setProfilePicture(null);
 
      
-        job.setJobId(job.getJobId());
-        job.setJobName(job.getJobName());
+        job.setJobId(existedJob.getJobId());
+        job.setJobName(existedJob.getJobName());
         job.setJobImage(null);
         Order request = new Order();
 
@@ -63,7 +65,7 @@ public class OrderServiceImp implements OrderService{
         request.setPrice(order.getPrice());
         request.setRequirementFile(order.getRequirementFile());
         request.setUser(user);
-        request.setConfirmed(true);
+        request.setConfirmed(false);
 
         Order response = this.orderRepository.save(request);
 
@@ -107,9 +109,8 @@ public class OrderServiceImp implements OrderService{
     }
 
     @Override
-    @Deprecated
     public Order updateOrder(Order order) {
-
+        log.info("Updaing order");
         Order response = this.orderRepository.findByIdAndConfirmedFalse(order.getId());
         
         if(response!=null){
@@ -118,12 +119,14 @@ public class OrderServiceImp implements OrderService{
             response.setCustomerName(order.getCustomerName());
             response.setRequirementFile(order.getRequirementFile());
             response.setCustomerId(order.getCustomerId());
+            response.setConfirmed(true);
+            response.setDocumentType(order.getDocumentType());
             response = this.orderRepository.save(response);
             String message ="""
                     Customer made an Order.Please check it.
                     Email: %s
                     User Name: %s
-                    Visite your dashboard for more details.
+                    Visit your dashboard for more details.
                     """.formatted(order.getCustomerEmail(),order.getCustomerName());
                     try {
                         this.emailService.sendMail(order.getCustomerEmail(), "Order Received" , message);
@@ -143,6 +146,14 @@ public class OrderServiceImp implements OrderService{
        log.info("Getting all Orders By Email");
 
        return this.orderRepository.findAllByCustomerEmail(email);
+    }
+
+    @Override
+    public List<Order> getAllOrdersByCustomerId(String id) {
+        log.info("Getting all Orders by customer id: {}",id);
+
+        return this.orderRepository.findByCustomerId(id);
+
     }
     
 

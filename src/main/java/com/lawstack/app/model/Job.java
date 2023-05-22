@@ -1,5 +1,7 @@
 package com.lawstack.app.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -8,7 +10,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+// `import jakarta.persistence.OneToMany;` is importing the `OneToMany` annotation from the Jakarta
+// Persistence API. This annotation is used to define a one-to-many relationship between two entities
+// in a Java Persistence API (JPA) application. In this specific code, it is used to define the
+// relationship between the `Job` entity and the `Order` entity, where one job can have multiple
+// orders.
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,12 +40,12 @@ public class Job {
 
     private String jobType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @OneToOne(mappedBy = "job")
+    @OneToMany(mappedBy = "job")
     @JsonIgnore
-    private Order order;
+    private List<Order> orders;
 
     public String getJobId() {
         return jobId;

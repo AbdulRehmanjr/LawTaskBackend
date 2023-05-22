@@ -3,13 +3,16 @@ package com.lawstack.app.model;
 
 
 
-import jakarta.persistence.CascadeType;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,15 +42,20 @@ public  class Order {
 
     private Double price = 0.0;
 
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne
     private Job job;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne
     private User user;
 
     private String customerId;
 
-   
+    private boolean completed = false;
+
+    @OneToMany(mappedBy = "order")
+    @JsonIgnore
+    private List<FileSharing> files;
+
     public String getId() {
         return id;
     }
@@ -127,6 +135,12 @@ public  class Order {
     }
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
+    }
+    public boolean isCompleted() {
+        return completed;
+    }
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
 

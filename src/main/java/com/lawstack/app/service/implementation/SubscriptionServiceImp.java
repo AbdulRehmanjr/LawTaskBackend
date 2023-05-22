@@ -6,8 +6,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Subscription;
 import com.lawstack.app.repository.SubscriptionRepository;
+import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.SubscriptionService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -21,8 +23,6 @@ public class SubscriptionServiceImp implements SubscriptionService{
     
     @Autowired
     private SubscriptionRepository subRepo;
-
-
 
     @Override
     public Subscription addCustomer(String email,String customerId,String SubscriptionId,String DiscountId) {
@@ -72,6 +72,18 @@ public class SubscriptionServiceImp implements SubscriptionService{
         
         }
         return customer;
+    }
+
+    @Override
+    public void deleteSubscription(String email) {
+        log.info("deleting the subscription");
+
+        Subscription response = this.subRepo.findByEmail(email);
+        
+        response.setSubscriptionId(null);
+        
+
+        this.subRepo.save(response);
     }
     
     

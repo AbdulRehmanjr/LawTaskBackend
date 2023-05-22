@@ -2,10 +2,8 @@ package com.lawstack.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
@@ -32,6 +30,7 @@ public class SellerRequest {
     private String location;
     private String description;
 
+    private String remarks = "";
     
     @JsonIgnore
     @OneToOne(mappedBy = "seller")
@@ -45,9 +44,10 @@ public class SellerRequest {
 
     private String documentName;
 
-    @OneToOne(fetch = FetchType.EAGER,cascade =CascadeType.ALL)
+    @OneToOne
     private User user;
-    
+
+    private boolean isRejected = false;
     public String getSellerId() {
         return sellerId;
     }
@@ -167,6 +167,22 @@ public class SellerRequest {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isRejected() {
+        return isRejected;
+    }
+
+    public void setRejected(boolean isRejected) {
+        this.isRejected = isRejected;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
     
 

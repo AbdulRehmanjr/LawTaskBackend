@@ -95,20 +95,9 @@ public class SellerRequestServiceImp  implements SellerRequestService{
             seller.setUser(user);
 
             seller = this.sellerRepo.save(seller);
-            
-            Freelancer freelancer = new Freelancer();
 
-            freelancer.setSeller(seller);
-
-            this.freelancerService.saveFreelancer(freelancer);
-           
-           this.emailService.sendMail(user.getEmail(), "To Become a Seller", "Your Request to become Seller has been forwrded to admin please wait for their response.");
-
-           Dashboard dash = new Dashboard();
-           dash.setSellers(1);
-           this.dashboardService.updateDashboard(dash);
-
-           this.sellerJoinService.saveSellerJoin(seller.getUser().getUserId());
+            this.emailService.sendMail(user.getEmail(), "To Become a Seller", "Your Request to become Seller has been forwrded to admin please wait for their response.");
+         
         } catch (Exception e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
@@ -178,6 +167,7 @@ public class SellerRequestServiceImp  implements SellerRequestService{
     public SellerRequest approvedRequest(String sellerId) {
         
         log.info("Fetcing the seller from database  to for approval");
+
         SellerRequest seller = this.sellerRepo.findById(sellerId).get();
 
         if(seller==null){
@@ -198,16 +188,97 @@ public class SellerRequestServiceImp  implements SellerRequestService{
             
             this.sellerService.createSeller(Seller);
             this.userService.updateUserRole(user.getUserId());
+
+            Freelancer freelancer = new Freelancer();
+
+            freelancer.setSeller(seller);
+
+            this.freelancerService.saveFreelancer(freelancer);
+           
+
+
+           Dashboard dash = new Dashboard();
+           dash.setSellers(1);
+           this.dashboardService.updateDashboard(dash);
+
+           this.sellerJoinService.saveSellerJoin(seller.getUser().getUserId());
             
             this.emailService.sendMail(Seller.getEmail(), "Seller Request Approval", "Your Request has been approved by the user");
         }
         
         return seller;
     }
+    
     @Override
     public List<SellerRequest> fetchApprovedSellerRequests() {
         log.info("Fetching all the approved Requests");
         return this.sellerRepo.findAllByisActiveTrue();
+    }
+
+    @Override
+    public SellerRequest rejectRequest(String userId, String remarks) {
+        log.info("Fetcing the seller from database for rejection.");
+        SellerRequest seller = this.sellerRepo.findById(userId).get();
+
+        if(seller==null){
+            log.info("Seller not existed with given sellerId: {}", userId);
+            return null;
+        }
+        
+        if(seller.isActive()==false){
+            
+            seller.setRejected(true);
+            seller.setRemarks(remarks);
+
+            
+            User user = this.userService.getUserById(seller.getUser().getUserId());
+
+            this.sellerRepo.save(seller);
+            
+            
+            this.emailService.sendMail(user.getEmail(), "Seller Request Approval", "Your Request has been approved by the user");
+        }
+        
+        return seller;
+    }
+    @Override
+    public SellerRequest updateSeller(String sellerInfo, MultipartFile document) {
+        log.info("Updating Seller Request Data in database");
+
+
+        SellerRequest seller = new SellerRequest();
+        ObjectMapper json = new ObjectMapper();
+
+        //* Converting string into JSON
+        try {
+            seller = json.readValue(sellerInfo, SellerRequest.class);
+        } catch (JsonProcessingException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }   
+        //* Adding profile Picture and Document to Seller JSON */
+        try {
+            seller.setDocument(document.getBytes());
+            seller.setDocumentName(document.getOriginalFilename());
+            seller.setDocumentType(document.getContentType());
+        } catch (IOException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+        //* Saving object into data base */
+        
+        try {
+            
+            seller.setRejected(false);
+            seller.setRemarks("");
+            seller = this.sellerRepo.save(seller);
+           this.emailService.sendMail(seller.getUser().getEmail(), "To Become a Seller", "Your Request to become Seller has been forwrded to admin please wait for their response.");
+
+        } catch (Exception e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+        return seller;
     }
 
 

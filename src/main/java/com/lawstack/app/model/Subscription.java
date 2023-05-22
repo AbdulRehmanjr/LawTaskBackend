@@ -21,7 +21,7 @@ public class Subscription {
 
     private String email;
 
-    @Column(unique=true)
+    @Column(unique=true,nullable = true)
     private String subscriptionId;
 
     private String discountId;

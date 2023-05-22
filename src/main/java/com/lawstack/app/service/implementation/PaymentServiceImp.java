@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.lawstack.app.model.Order;
 import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.model.Subscription;
+import com.lawstack.app.model.UserDashboard;
 import com.lawstack.app.service.OrderPaymentService;
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SubscriptionService;
+import com.lawstack.app.service.UserDashBoardService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Coupon;
@@ -43,12 +45,11 @@ public class PaymentServiceImp implements PaymentService {
     @Value("${Product_3}")
     private String rainString;
 
-
     @Autowired
     private OrderPaymentService orderPaymentService;
 
-   
-
+    @Autowired
+    private UserDashBoardService uDashBoardService;
     @PostConstruct
     public void init() {
         Stripe.apiKey = STRIPE_API;
@@ -132,12 +133,20 @@ public class PaymentServiceImp implements PaymentService {
             pay.setEmail(order.getCustomerEmail());
             pay.setName(order.getCustomerName());
             pay.setJobId(order.getJob().getJobId());
-            pay.setSellerId(order.getJob().getJobId());
+            pay.setSellerId(order.getUser().getUserId());
             pay.setPrice(order.getPrice());
+
+            UserDashboard dash = this.uDashBoardService.getInfoByUserId(order.getUser().getUserId());
+
+            if(dash!=null){
+                dash.setRevenue(dash.getRevenue()+order.getPrice());
+                this.uDashBoardService.updateDashboard(dash);
+            }
+            
             this.orderPaymentService.saveOrderPayment(pay);
 
             return session.getUrl();
-        } catch (StripeException e) {
+        } catch (Exception e) {
 
             log.info("ERROR: {}", e.getMessage());
             return null;
@@ -228,6 +237,26 @@ public class PaymentServiceImp implements PaymentService {
             log.error("Error : {}", e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    @Deprecated
+    public String removeSubscription(String email) {
+      
+        Subscription response = this.subService.getCustomerByEmail(email);
+
+
+        return null;
+        
+
+    }
+
+    @Override
+    public String getSubscriptionId(String email) {
+        
+        log.info("geting the subscription by email");
+
+        return this.subService.getCustomerByEmail(email).getSubscriptionId();
     }
 
   

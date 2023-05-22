@@ -15,6 +15,8 @@ public interface OrderService {
 
     List<Order> getAllOrdersByCustomerEmail(String email);
     
+    List<Order> getAllOrdersByCustomerId(String id);
+
     void deleteOrder(String id);
 
     Order updateOrder(Order order);

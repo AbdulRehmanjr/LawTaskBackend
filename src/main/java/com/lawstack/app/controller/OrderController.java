@@ -120,13 +120,25 @@ public class OrderController {
 
         if (result == null) {
             log.error("Orders not found");
-            return ResponseEntity.status(401).body("Order not found");
+            return ResponseEntity.status(401).body(null);
         }
 
         return ResponseEntity.status(201).body(result);
 
     }
+    @GetMapping("/customer/{id}")
+    public ResponseEntity<?> getOrderByCustomerId(@PathVariable("id") String id) {
 
+        List<Order> result = this.orderService.getAllOrdersByCustomerId(id);
+
+        if (result == null) {
+            log.error("Orders not found");
+            return ResponseEntity.status(401).body(null);
+        }
+
+        return ResponseEntity.status(201).body(result);
+
+    }
     // delete order
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") String id) {

@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lawstack.app.model.Coupon;
 import com.lawstack.app.service.CouponService;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 
 
 @RestController
 @RequestMapping("/coupon")
+@Slf4j
 public class CouponController {
 
     @Autowired
@@ -54,10 +57,17 @@ public class CouponController {
 
         List<Coupon> response = this.couponService.getAllCoupon();
 
-        if (response == null) {
-            return ResponseEntity.status(404).body(null);
+        try {
+            if(response.isEmpty()){
+                return ResponseEntity.status(404).body(null);
+            
+            }
+        } catch (Exception e) {
+          log.error("Coupon List in Empty");
+          return ResponseEntity.status(404).body(null);
         }
-
+        
+        
         return ResponseEntity.status(201).body(response);
     }
 
