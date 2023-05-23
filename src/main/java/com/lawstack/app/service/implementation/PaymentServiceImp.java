@@ -62,6 +62,8 @@ public class PaymentServiceImp implements PaymentService {
         Stripe.apiKey = STRIPE_API;
     }
 
+    @Value("${web_domain}")
+    private String Domain;
     
     @Override
     public String paymentCheckout(String type, String email) {
@@ -71,7 +73,7 @@ public class PaymentServiceImp implements PaymentService {
         if (customer == null) {
             return null;
         }
-        String YOUR_DOMAIN = "http://localhost:4200";
+        
 
         JobNumber currentSubscription = getSubscriptionLevel(email);
 
@@ -97,8 +99,8 @@ public class PaymentServiceImp implements PaymentService {
         if (selectedSubscription != null) {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-                    .setSuccessUrl(YOUR_DOMAIN + "/home/job-list")
-                    .setCancelUrl(YOUR_DOMAIN + "/home/job-list")
+                    .setSuccessUrl(Domain + "/home/job-list")
+                    .setCancelUrl(Domain + "/home/job-list")
                     .setCustomer(customer.getId())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
@@ -138,14 +140,14 @@ public class PaymentServiceImp implements PaymentService {
 
     @Override
     public String projectPayment(Order order) {
-        String YOUR_DOMAIN = "http://localhost:4200";
+        
 
         Customer customer = checkAndCreateCustomer(order.getCustomerEmail(), order.getCustomerName());
         long price = (long) (order.getPrice() * 100);
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:4200/home/messages")
-                .setCancelUrl("http://localhost:4200/home/messages")
+                .setSuccessUrl(Domain+"/home/messages")
+                .setCancelUrl(Domain+"/home/messages")
                 .setCustomer(customer.getId())
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()

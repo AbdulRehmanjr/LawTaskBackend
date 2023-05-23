@@ -2,7 +2,6 @@ package com.lawstack.app.configuration.security;
 
 import java.util.Arrays;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Bean;
@@ -39,7 +38,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     private UserDetailServiceImp userDetailService;
 
-    final private String[] origin = {"http://localhost:4200","https://checkout.stripe.com","http://139.59.215.241","http://lawtasks.pro","https://lawtasks.pro","https://139.59.215.241"};
+    final private String[] origin = { "http://localhost:4200", "https://checkout.stripe.com", "http://139.59.215.241",
+            "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
 
     @Bean
     AuthenticationProvider authenticationProvider() {
@@ -70,13 +70,21 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .headers()
                 .frameOptions().sameOrigin()
                 .and()
-                .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected","/user/**", "/sellerrequest/**","/order/**","/subscription/**","/file/**", "/userChat/**","/checkout/**").hasAuthority("USER")
-                        .requestMatchers("/user/auth","/coupon/**","/user/**","/subscription/**","/file/**","/dashboard/**","/chatlist/**","/chat/**" ,"/userChat/**","/checkout/**").hasAuthority("ADMIN")
-                        .requestMatchers( "/seller/**","/chat/**", "/job/**","/subscription/**","/file/**","/chatlist/**","/chat/**", "/userChat/**","/userdashboard/**").hasAuthority("SELLER")
-                        .requestMatchers("/role/**","/social/**","/order/**", "/token/**"
-                               ,"/subscription/**", "/join/**", "/ws/**","/freelancer/**","/app/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(
+                        (req) -> req
+                                .requestMatchers("/user/protected", "/user/**", "/sellerrequest/**", "/order/**",
+                                        "/subscription/**", "/file/**", "/userChat/**", "/checkout/**")
+                                .hasAuthority("USER")
+                                .requestMatchers("/user/auth", "/coupon/**", "/user/**", "/subscription/**", "/file/**",
+                                        "/dashboard/**", "/chatlist/**", "/chat/**", "/userChat/**", "/checkout/**")
+                                .hasAuthority("ADMIN")
+                                .requestMatchers("/seller/**", "/chat/**", "/job/**", "/subscription/**", "/file/**",
+                                        "/chatlist/**", "/chat/**", "/userChat/**", "/userdashboard/**")
+                                .hasAuthority("SELLER")
+                                .requestMatchers("/role/**", "/social/**", "/order/**", "/token/**","/subscription/**",
+                                        "/join/**", "/ws/**", "/freelancer/**", "/app/**")
+                                .permitAll()
+                                .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -86,16 +94,14 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-    
-   
     @Bean
     CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(origin));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("x-Auth-Token","Acess-Control-Allow-Origin"));
+        configuration.setExposedHeaders(Arrays.asList("x-Auth-Token", "Acess-Control-Allow-Origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return new CorsFilter(source);

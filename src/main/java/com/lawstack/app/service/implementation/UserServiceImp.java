@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.lawstack.app.model.ChatUserList;
+
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Role;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.RoleRepository;
 import com.lawstack.app.repository.UserRespository;
-import com.lawstack.app.service.ChatUserListService;
+
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.SellerAndUserJoinService;

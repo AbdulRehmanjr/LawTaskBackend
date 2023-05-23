@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.sym.Name;
 import com.lawstack.app.model.Coupon;
 import com.lawstack.app.repository.CouponRepository;
 import com.lawstack.app.service.CouponService;

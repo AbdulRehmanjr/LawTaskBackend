@@ -21,7 +21,8 @@ public class OrderPaymentServiceImp  implements OrderPaymentService{
     private OrderPaymentRepository opRepo;
     @Override
     public OrderPayment saveOrderPayment(OrderPayment payment) {
-       
+        
+        log.info("Saving Order payment");
         String id = UUID.randomUUID().toString();
 
         payment.setId(id);
