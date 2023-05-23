@@ -39,7 +39,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     private UserDetailServiceImp userDetailService;
 
-    final private String[] origin = {"http://localhost:4200","https://checkout.stripe.com"};
+    final private String[] origin = {"http://localhost:4200","https://checkout.stripe.com","http://139.59.215.241"};
 
     @Bean
     AuthenticationProvider authenticationProvider() {
@@ -70,10 +70,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .headers()
                 .frameOptions().sameOrigin()
                 .and()
-                .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected").hasAuthority("USER")
-                        .requestMatchers("/user/auth").hasAuthority("ADMIN")
-                        .requestMatchers("/role/**","/social/**","/coupon/**","/order/**", "/token/**", "/user/**", "/seller/**", "/sellerrequest/**",
-                                "/job/**","/subscription/**","/userdashboard/**","/checkout/**","/file/**","/dashboard/**", "/join/**","/chat/**", "/ws/**","/freelancer/**", "/userChat/**","/app/**","/chatlist/**")
+                .authorizeHttpRequests((req) -> req.requestMatchers("/user/protected","/user/**", "/sellerrequest/**","/order/**","/subscription/**","/file/**", "/userChat/**","/checkout/**").hasAuthority("USER")
+                        .requestMatchers("/user/auth","/coupon/**","/user/**","/subscription/**","/file/**","/dashboard/**","/chatlist/**","/chat/**" ,"/userChat/**","/checkout/**").hasAuthority("ADMIN")
+                        .requestMatchers( "/seller/**","/chat/**", "/job/**","/subscription/**","/file/**","/chatlist/**","/chat/**", "/userChat/**","/userdashboard/**").hasAuthority("SELLER")
+                        .requestMatchers("/role/**","/social/**","/order/**", "/token/**"
+                               ,"/subscription/**", "/join/**", "/ws/**","/freelancer/**","/app/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
