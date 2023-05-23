@@ -13,6 +13,7 @@ public interface SellerService {
 
     List<Seller> getAll();
 
+    Seller getByEmail(String email);
 
     Seller getSellerByUserId(String userId);
 

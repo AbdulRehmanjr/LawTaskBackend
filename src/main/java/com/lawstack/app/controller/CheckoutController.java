@@ -8,6 +8,7 @@ import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Order;
 
 import com.lawstack.app.model.PaymentRequest;
+import com.lawstack.app.model.Seller;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
 
@@ -67,36 +68,41 @@ public class CheckoutController {
     private String endpointSecret;
 
     @PostMapping("/cancel/{email}")
-    ResponseEntity<?> cancelSubscription(@PathVariable String email) {
+    ResponseEntity<String> cancelSubscription(@PathVariable String email) {
 
-        log.info("Request to cancel the subscrption");
+        log.info("Request to cancel the subscription");
         String id = this.paymentService.getSubscriptionId(email);
-
+        
+        Subscription subscription;
         try {
-            Subscription subscription = Subscription.retrieve(id);
+            subscription = Subscription.retrieve(id);
             this.customerId = subscription.getCustomer();
             subscription.cancel();
+            Seller seller = this.sellerService.getByEmail(email);
+
+            seller.setSellerType("NONE");
+
+            this.sellerService.updateJobStatus(seller);
         } catch (StripeException e) {
-            log.error("Error: {} Message: {}", e.getCause(), e.getMessage());
+            log.error("Error: {} Message: {}", e.getStatusCode(), e.getMessage());
             return ResponseEntity.status(404).body(null);
         }
         
-        return ResponseEntity.status(201).body("success");
+        return ResponseEntity.status(201).body("canceled");
 
     }
 
     @PostMapping("/create-checkout-session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody PaymentRequest payment) {
 
-        log.info("Request for checkout page recived");
+        log.info("Request for checkout page received");
 
-        String s = this.paymentService.paymentCheckout(payment.getType(), payment.getEmail());
+        String url = this.paymentService.paymentCheckout(payment.getType(), payment.getEmail());
 
-        if (s != null) {
+        if (url != null) {
 
-            return ResponseEntity.status(201).body(s);
+            return ResponseEntity.status(201).body(url);
         }
-
         return ResponseEntity.status(404).body(null);
 
     }
@@ -117,6 +123,8 @@ public class CheckoutController {
 
     }
 
+ 
+
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
@@ -134,17 +142,18 @@ public class CheckoutController {
                     // ! may be handle later
                     case "payment_intent.succeeded":
 
-                        PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+                        // PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
 
-                        Customer pay_Customer = null;
-                        try {
-                            // * get costomer form database if not exist make new one
+                        // Customer pay_Customer = null;
+                        // try {
+                        //     // * get costomer form database if not exist make new one
 
-                            log.info("customer : {}", paymentIntent);
+                        //     log.info("Payment Intent : {}", paymentIntent);
+                        //     log.
 
-                        } catch (Exception e) {
-                            log.error("Customer alreday exist in data base");
-                        }
+                        // } catch (Exception e) {
+                        //     log.error("Customer alreday exist in data base");
+                        // }
 
                         log.info("PaymentIntent was successful!");
                         break;
@@ -238,3 +247,4 @@ public class CheckoutController {
     }
 
 }
+

@@ -17,4 +17,7 @@ public enum JobNumber {
         return value;
     }
     
+    public boolean canUpdate(JobNumber newJobNumber) {
+        return newJobNumber.getValue() >= this.value;
+    }
 }

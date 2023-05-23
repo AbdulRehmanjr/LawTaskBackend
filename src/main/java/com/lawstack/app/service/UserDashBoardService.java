@@ -11,5 +11,7 @@ public interface UserDashBoardService {
 
     UserDashboard getInfoByUserId(String id);
 
+    UserDashboard getUserDashboardByEmail(String email);
+
     UserDashboard updateDashboard(UserDashboard userDashboard);
 }

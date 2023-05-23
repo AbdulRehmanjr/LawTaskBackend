@@ -103,56 +103,59 @@ public class SellerServiceImp implements SellerService {
 
         Seller seller = this.sellerRepo.findByEmail(email);
         if (seller == null) {
-            log.error("Seller may not exist with given email.");
+            log.error("Seller may not exist with the given email.");
             return null;
         }
+        
         Dashboard dash = new Dashboard();
-        UserDashboard udash = new UserDashboard();
-
-        udash.setEmail(email);
-        udash.setUserId(seller.getUser().getUserId());
+        UserDashboard udash = this.udashService.getUserDashboardByEmail(email);
+        
         if (card.getSubscription().equals("Dew Dropper")) {
             log.info("got dew");
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
             dash.setDewDropper(1);
-            dash.setIncome(amount/100.0);
-            
-            udash.setSellerType("Dew Dropper");
+            dash.setIncome(amount / 100.0);
+        
+            udash.setSellerType("DEWDROPPER");
         } else if (card.getSubscription().equals("Sprinkle Starter")) {
             log.info("got sprinkle");
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
             dash.setSprinkle(1);
-            dash.setIncome(amount/100.0);
-
-            udash.setSellerType("Sprinkle Starter");
+            dash.setIncome(amount / 100.0);
+        
+            udash.setSellerType("SPRINKLE");
         } else if (card.getSubscription().equals("Rain Maker")) {
             log.info("got rain");
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
             dash.setRainmaker(1);
-            dash.setIncome(amount/100.0);
-
-            udash.setSellerType("Rain Maker");
+            dash.setIncome(amount / 100.0);
+        
+            udash.setSellerType("RAINMAKER");
         }
-
+        
         seller.setActive(true);
-
         seller.setSellerType(card.getSubscription());
         this.sellerRepo.save(seller);
-
-        this.udashService.saveDashboard(udash);
+        
+        this.udashService.updateUserDashboard(udash);
         this.dashService.updateDashboard(dash);
         return seller;
+        
     }
 
     @Override
     public Seller updateJobStatus(Seller seller) {
-        log.info("Update the job status");
-        Seller response = this.sellerRepo.findByUserUserId(seller.getUser().getUserId());
-
-        if (response == null) {
-            return null;
-        }
+        
+       
         return this.sellerRepo.save(seller);
+    }
+
+    @Override
+    public Seller getByEmail(String email) {
+       
+        log.info("Geting seller by email : {}",email);
+
+        return this.sellerRepo.findByEmail(email);
     }
 
 }

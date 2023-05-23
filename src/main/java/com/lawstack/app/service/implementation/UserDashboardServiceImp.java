@@ -20,7 +20,7 @@ public class UserDashboardServiceImp implements UserDashBoardService {
 
     @Override
     public UserDashboard saveDashboard(UserDashboard dashboard) {
-       log.info("Saving user dashboard");
+        log.info("Saving user dashboard");
         String id = UUID.randomUUID().toString();
 
         dashboard.setId(id);
@@ -30,13 +30,13 @@ public class UserDashboardServiceImp implements UserDashBoardService {
 
     @Override
     public UserDashboard getuserInfo(String email) {
-        log.info("Get user dashboard info by email: {}",email);
+        log.info("Get user dashboard info by email: {}", email);
         return this.uDashRepo.findByEmail(email);
     }
 
     @Override
     public UserDashboard getInfoByUserId(String id) {
-        log.info("Get the user dashboard by userId {}",id);
+        log.info("Get the user dashboard by userId {}", id);
 
         return this.uDashRepo.findByUserId(id);
     }
@@ -44,21 +44,29 @@ public class UserDashboardServiceImp implements UserDashBoardService {
     @Override
     public UserDashboard updateDashboard(UserDashboard userDashboard) {
         log.info("updating the dashboard");
-        UserDashboard  dash = this.getInfoByUserId(userDashboard.getUserId());
+        UserDashboard dash = this.getInfoByUserId(userDashboard.getUserId());
 
-
-        if(userDashboard.getJobs()!=0){
-            dash.setJobs(dash.getJobs()+1);
+        if (userDashboard.getJobs() != 0) {
+            dash.setJobs(dash.getJobs() + 1);
         }
-        if(userDashboard.getRevenue()!=0){
+        if (userDashboard.getRevenue() != 0) {
             dash.setRevenue(userDashboard.getRevenue());
         }
-        if(userDashboard.getSellerType()!=null){
+        if (userDashboard.getSellerType() != null) {
             dash.setSellerType(userDashboard.getSellerType());
         }
         return this.uDashRepo.save(dash);
     }
 
+    @Override
+    public UserDashboard getUserDashboardByEmail(String email) {
+       log.info("Geting useDashboard by email: {}",email);
+       
 
+
+    return this.uDashRepo.findByEmail(email);
+
+
+    }
 
 }
