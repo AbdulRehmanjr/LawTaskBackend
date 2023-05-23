@@ -10,11 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-// `import jakarta.persistence.OneToMany;` is importing the `OneToMany` annotation from the Jakarta
-// Persistence API. This annotation is used to define a one-to-many relationship between two entities
-// in a Java Persistence API (JPA) application. In this specific code, it is used to define the
-// relationship between the `Job` entity and the `Order` entity, where one job can have multiple
-// orders.
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -33,10 +28,6 @@ public class Job {
     private int jobPrice=10;
 
     private String description;
-    
-    private Double likes = 0.0;
-
-    private Double views =0.0;
 
     private String jobType;
 
@@ -69,22 +60,6 @@ public class Job {
 
     public void setJobImage(byte[] jobImage) {
         this.jobImage = jobImage;
-    }
-
-    public Double getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Double likes) {
-        this.likes = likes;
-    }
-
-    public Double getViews() {
-        return views;
-    }
-
-    public void setViews(Double views) {
-        this.views = views;
     }
 
     public User getUser() {

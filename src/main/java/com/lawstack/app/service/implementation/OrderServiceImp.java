@@ -155,6 +155,15 @@ public class OrderServiceImp implements OrderService{
         return this.orderRepository.findByCustomerId(id);
 
     }
+
+    @Override
+    public Order orderDone(Order order) {
+        log.info("Updating job status");
+
+        order.setCompleted(true);
+        
+        return this.orderRepository.save(order);
+    }
     
 
 }

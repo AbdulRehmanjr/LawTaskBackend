@@ -45,6 +45,7 @@ public class OrderController {
 
     }
 
+
     @PostMapping("/register-confirmed")
     public ResponseEntity<?> OrderConfirmed(@RequestParam("requirement") MultipartFile file, String order) {
 
@@ -74,6 +75,17 @@ public class OrderController {
 
     }
 
+    @PostMapping("/done")
+    ResponseEntity<?> jobDone(@RequestBody Order order){
+        log.info("Job completed updating its status");
+
+        Order response = this.orderService.orderDone(order);
+
+        if(response != null){
+            return ResponseEntity.status(201).body(order);
+        }
+        return ResponseEntity.status(404).body(null);
+    }
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAllOrders() {
 

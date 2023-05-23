@@ -66,6 +66,7 @@ public class SellerServiceImp implements SellerService {
         String id = UUID.randomUUID().toString();
         seller.setSellerId(id);
         seller.setUser(user);
+        seller.setActive(true);
 
         this.sellerRepo.save(seller);
 
@@ -124,7 +125,7 @@ public class SellerServiceImp implements SellerService {
             dash.setIncome(amount / 100.0);
         
             udash.setSellerType("SPRINKLE");
-        } else if (card.getSubscription().equals("Rain Maker")) {
+        } else if (card.getSubscription().equals("Rainmaker")) {
             log.info("got rain");
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
             dash.setRainmaker(1);
@@ -134,10 +135,10 @@ public class SellerServiceImp implements SellerService {
         }
         
         seller.setActive(true);
-        seller.setSellerType(card.getSubscription());
+        seller.setSellerType(udash.getSellerType());
         this.sellerRepo.save(seller);
         
-        this.udashService.updateUserDashboard(udash);
+        this.udashService.updateDashboard(udash);
         this.dashService.updateDashboard(dash);
         return seller;
         

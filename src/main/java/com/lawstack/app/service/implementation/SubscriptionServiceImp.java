@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lawstack.app.model.Dashboard;
+
 import com.lawstack.app.model.Subscription;
 import com.lawstack.app.repository.SubscriptionRepository;
-import com.lawstack.app.service.DashboardService;
+
 import com.lawstack.app.service.SubscriptionService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -25,33 +25,45 @@ public class SubscriptionServiceImp implements SubscriptionService{
     private SubscriptionRepository subRepo;
 
     @Override
-    public Subscription addCustomer(String email,String customerId,String SubscriptionId,String DiscountId) {
-        
-        log.info("Saving a new Subscription in database");
-
-        Subscription sub = new Subscription();
-
-        String id = UUID.randomUUID().toString();
-
-        sub.setSubId(id);
-        sub.setCustomerId(customerId);
-        sub.setEmail(email);
-        sub.setSubscriptionId(SubscriptionId);
-        sub.setDiscountId(DiscountId);
-
-        LocalDate valid = LocalDate.now().plusDays(30);
-        sub.setDateValid(valid);
-
-        try {
-            sub = this.subRepo.save(sub);
-            return sub;
-        } catch (Exception e) {
-            log.error("Already existed");
+    public Subscription addCustomer(String email, String customerId, String subscriptionId, String discountId) {
+        log.info("Saving a new Subscription in the database");
+    
+        Subscription existingSubscription = this.subRepo.findByEmail(email);
+        if (existingSubscription != null) {
+            // Subscription already exists, update it instead
+            existingSubscription.setCustomerId(customerId);
+            existingSubscription.setSubscriptionId(subscriptionId);
+            existingSubscription.setDiscountId(discountId);
+            existingSubscription.setDateValid(LocalDate.now().plusDays(30));
+    
+            try {
+                Subscription updatedSubscription = this.subRepo.save(existingSubscription);
+                return updatedSubscription;
+            } catch (Exception e) {
+                log.error("Error occurred while updating the subscription: {}", e.getMessage());
+            }
+        } else {
+            // Create a new subscription entry
+            Subscription newSubscription = new Subscription();
+            newSubscription.setSubId(UUID.randomUUID().toString());
+            newSubscription.setEmail(email);
+            newSubscription.setCustomerId(customerId);
+            newSubscription.setSubscriptionId(subscriptionId);
+            newSubscription.setDiscountId(discountId);
+            newSubscription.setDateValid(LocalDate.now().plusDays(30));
+    
+            try {
+                Subscription savedSubscription = this.subRepo.save(newSubscription);
+                return savedSubscription;
+            } catch (Exception e) {
+                log.error("Error occurred while saving the subscription: {}", e.getMessage());
+            }
         }
+    
         return null;
-        
     }
-
+    
+    
     @Override
     public Subscription getCustomerByEmail(String email) {
         

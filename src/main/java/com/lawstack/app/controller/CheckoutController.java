@@ -62,7 +62,7 @@ public class CheckoutController {
     @Autowired
     private EmailService emailService;
 
-    private String customerId="";
+    private String customerId = "";
 
     @Value("${stripe_webhook}")
     private String endpointSecret;
@@ -72,7 +72,7 @@ public class CheckoutController {
 
         log.info("Request to cancel the subscription");
         String id = this.paymentService.getSubscriptionId(email);
-        
+
         Subscription subscription;
         try {
             subscription = Subscription.retrieve(id);
@@ -87,7 +87,7 @@ public class CheckoutController {
             log.error("Error: {} Message: {}", e.getStatusCode(), e.getMessage());
             return ResponseEntity.status(404).body(null);
         }
-        
+
         return ResponseEntity.status(201).body("canceled");
 
     }
@@ -123,8 +123,6 @@ public class CheckoutController {
 
     }
 
- 
-
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
@@ -146,13 +144,13 @@ public class CheckoutController {
 
                         // Customer pay_Customer = null;
                         // try {
-                        //     // * get costomer form database if not exist make new one
+                        // // * get costomer form database if not exist make new one
 
-                        //     log.info("Payment Intent : {}", paymentIntent);
-                        //     log.
+                        // log.info("Payment Intent : {}", paymentIntent);
+                        // log.
 
                         // } catch (Exception e) {
-                        //     log.error("Customer alreday exist in data base");
+                        // log.error("Customer alreday exist in data base");
                         // }
 
                         log.info("PaymentIntent was successful!");
@@ -163,70 +161,58 @@ public class CheckoutController {
                         System.out.println("PaymentMethod was attached to a Customer!");
                         break;
 
-                    case "checkout.session.completed":
+                        case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
-
                         log.info("Session: {}", session);
                         if (session != null) {
-
                             if ("subscription".equals(session.getMode())) {
+                                String subscriptionId = session.getSubscription();
                                 String customerId = session.getCustomer();
-
+                                String email = "";
+                    
                                 try {
                                     Customer customer = Customer.retrieve(customerId);
-                                    SubscriptionListParams params = SubscriptionListParams.builder()
-                                            .setCustomer(customerId)
-                                            .build();
-                                    SubscriptionCollection subscriptions = Subscription.list(params);
-                                    log.info("Subscription: {}", subscriptions);
-                                    for (Subscription subscription : subscriptions.getData()) {
-                                        String subscriptionId = subscription.getId();
-                                        String discountId = subscription.getDiscount() != null
-                                                ? subscription.getDiscount().getId()
-                                                : null;
-                                        Price price = Price
-                                                .retrieve(subscription.getItems().getData().get(0).getPrice().getId());
-
-                                        Product product = Product.retrieve(price.getProduct());
-
-                                        String customerEmail = customer.getEmail();
-
-                                        // Update the seller info after subscription
-                                        CardSubscription card = new CardSubscription();
-                                        card.setSubscription(product.getName());
-
-                                        this.sellerService.addSubscription(card, customerEmail, price.getUnitAmount());
-
-                                        this.subService.addCustomer(customerEmail, customerId, subscriptionId,
-                                                discountId);
-                                        this.emailService.sendMail(customerEmail, "Purchase of Subscription",
-                                                "Thanks for purchasing the subscription please visit your dashboard to add jobs.");
-                                    }
+                                    Subscription subscription = Subscription.retrieve(subscriptionId);
+                    
+                                    String discountId = subscription.getDiscount() != null ? subscription.getDiscount().getId() : null;
+                                    Price price = Price.retrieve(subscription.getItems().getData().get(0).getPrice().getId());
+                                    Product product = Product.retrieve(price.getProduct());
+                    
+                                    email = customer.getEmail();
+                    
+                                    // Update the seller info after subscription
+                                    CardSubscription card = new CardSubscription();
+                                    card.setSubscription(product.getName());
+                    
+                                    this.sellerService.addSubscription(card, email, price.getUnitAmount());
+                    
+                                    this.subService.addCustomer(email, customerId, subscriptionId, discountId);
+                    
+                                    this.emailService.sendMail(email, "Purchase of Subscription",
+                                            "Thanks for purchasing the subscription. Please visit your dashboard to add jobs.");
                                 } catch (StripeException e) {
-                                    log.error("ERROR: {} MESSAGE :{}", e.getCause(), e.getMessage());
+                                    log.error("ERROR: {} MESSAGE: {}", e.getCause(), e.getMessage());
+                                } catch (Exception e) {
+                                    log.error("ERROR: {}", e.getMessage());
                                 }
                             } else {
-
                                 PaymentIntent payment = PaymentIntent.retrieve(session.getPaymentIntent());
                                 Dashboard dashboard = new Dashboard();
-
                                 dashboard.setIncome(payment.getAmount() / 100.0);
                                 this.dashService.updateDashboard(dashboard);
                             }
-
                         }
                         break;
                     case "customer.subscription.deleted":
-                    
 
-                    try {
-                        Customer response = Customer.retrieve(this.customerId);
-                        
-                        this.subService.deleteSubscription(response.getEmail());
-                    } catch (StripeException e) {
-                        log.error("Error: {} Message: {}", e.getCause(), e.getMessage());
-                    }
-    
+                        try {
+                            Customer response = Customer.retrieve(this.customerId);
+
+                            this.subService.deleteSubscription(response.getEmail());
+                        } catch (StripeException e) {
+                            log.error("Error: {} Message: {}", e.getCause(), e.getMessage());
+                        }
+
                         break;
 
                 }
@@ -247,4 +233,3 @@ public class CheckoutController {
     }
 
 }
-

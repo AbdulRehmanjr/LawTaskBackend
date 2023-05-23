@@ -9,6 +9,8 @@ public interface OrderService {
 
     Order getOrderById(String orderId);
 
+    Order orderDone(Order order);
+
     List<Order> getAllOrders();
     
     List<Order> getAllOrdersByUserId(String userId);

@@ -36,16 +36,16 @@ public class PaymentServiceImp implements PaymentService {
     @Autowired
     private SubscriptionService subService;
 
-    @Value("${My_Secert}")
+    @Value("${stripe_secert_key}")
     private String STRIPE_API;
 
-    @Value("${Product_1}")
+    @Value("${Dew_Dropper}")
     private String dewString;
 
-    @Value("${Product_2}")
+    @Value("${Sprinkle_Starter}")
     private String sprinkleString;
 
-    @Value("${Product_3}")
+    @Value("${Rain_Maker}")
     private String rainString;
 
     @Autowired
@@ -66,9 +66,9 @@ public class PaymentServiceImp implements PaymentService {
     @Override
     public String paymentCheckout(String type, String email) {
         Customer customer = checkAndCreateCustomer(email);
-        Coupon coupon = createCoupon();
+        // Coupon coupon = createCoupon();
 
-        if (customer == null || coupon == null) {
+        if (customer == null) {
             return null;
         }
         String YOUR_DOMAIN = "http://localhost:4200";
@@ -100,10 +100,6 @@ public class PaymentServiceImp implements PaymentService {
                     .setSuccessUrl(YOUR_DOMAIN + "/home/job-list")
                     .setCancelUrl(YOUR_DOMAIN + "/home/job-list")
                     .setCustomer(customer.getId())
-                    .addDiscount(
-                            SessionCreateParams.Discount.builder()
-                                    .setCoupon(coupon.getId())
-                                    .build())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setQuantity(1L)
