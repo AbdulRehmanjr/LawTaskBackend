@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/token")
-@CrossOrigin("http://localhost:4200")
 public class AuthenticateController {
 
     @Autowired

@@ -31,79 +31,82 @@ import com.lawstack.app.service.implementation.UserDetailServiceImp;
 @Configuration
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @Autowired
-    private UserDetailServiceImp userDetailService;
+        @Autowired
+        private JwtAuthenticationEntryPoint unauthorizedHandler;
+        @Autowired
+        private JwtAuthenticationFilter jwtAuthenticationFilter;
+        @Autowired
+        private UserDetailServiceImp userDetailService;
 
-    final private String[] origin = { "http://localhost:4200", "https://checkout.stripe.com", "http://139.59.215.241",
-            "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
+        final private String[] origin = { "http://localhost:4200", "https://checkout.stripe.com",
+                        "http://139.59.215.241",
+                        "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
 
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
+        @Bean
+        AuthenticationProvider authenticationProvider() {
+                DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
 
-        dao.setUserDetailsService(this.userDetailService);
-        dao.setPasswordEncoder(this.encoder());
-        return dao;
-    }
+                dao.setUserDetailsService(this.userDetailService);
+                dao.setPasswordEncoder(this.encoder());
+                return dao;
+        }
 
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        @Bean
+        AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 
-        return config.getAuthenticationManager();
-    }
+                return config.getAuthenticationManager();
+        }
 
-    @Bean
-    PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        PasswordEncoder encoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .cors()
-                .and()
-                .headers()
-                .frameOptions().sameOrigin()
-                .and()
-                .authorizeHttpRequests(
-                        (req) -> req
-                                .requestMatchers("/user/protected", "/user/**", "/sellerrequest/**", "/order/**",
-                                        "/subscription/**", "/file/**", "/userChat/**", "/checkout/**")
-                                .hasAuthority("USER")
-                                .requestMatchers("/user/auth", "/coupon/**", "/user/**", "/subscription/**", "/file/**",
-                                        "/dashboard/**", "/chatlist/**", "/chat/**", "/userChat/**", "/checkout/**")
-                                .hasAuthority("ADMIN")
-                                .requestMatchers("/seller/**", "/chat/**", "/job/**", "/subscription/**", "/file/**",
-                                        "/chatlist/**", "/chat/**", "/userChat/**", "/userdashboard/**")
-                                .hasAuthority("SELLER")
-                                .requestMatchers("/role/**", "/social/**", "/order/**", "/token/**","/subscription/**",
-                                        "/join/**", "/ws/**", "/freelancer/**", "/app/**")
-                                .permitAll()
-                                .anyRequest().authenticated())
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        ;
-        return http.build();
-    }
+        @Bean
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf().disable()
+                                .cors()
+                                .and()
+                                .headers()
+                                .frameOptions().sameOrigin()
+                                .and()
+                                .authorizeHttpRequests(
+                                                (req) -> req
+                                                                .requestMatchers("/user/**",
+                                                                                "/sellerrequest/**", "/order/**",
+                                                                                "/subscription/**", "/file/**",
+                                                                                "/userChat/**", "/checkout/**",
+                                                                                 "/coupon/**",
+                                                                                "/dashboard/**", "/chatlist/**",
+                                                                                "/chat/**", "/userChat/**",
+                                                                                "/seller/**","/job/**",
+                                                                                "/userdashboard/**",
+                                                                                "/role/**", "/social/**", "/order/**",
+                                                                                "/token/**",
+                                                                                "/join/**", "/ws/**", "/freelancer/**",
+                                                                                "/app/**")
+                                                                .permitAll()
+                                                                .anyRequest().authenticated())
+                                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                                .and()
+                                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                .and()
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                ;
+                return http.build();
+        }
 
-    @Bean
-    CorsFilter corsFilter() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(origin));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("x-Auth-Token", "Acess-Control-Allow-Origin"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return new CorsFilter(source);
-    }
+        @Bean
+        CorsFilter corsFilter() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList(origin));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                configuration.setAllowedHeaders(Arrays.asList("*"));
+                configuration.setAllowCredentials(true);
+                configuration.setExposedHeaders(Arrays.asList("x-Auth-Token", "Acess-Control-Allow-Origin"));
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return new CorsFilter(source);
+        }
 }

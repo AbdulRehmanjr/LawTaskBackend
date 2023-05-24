@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.lawstack.app.dto.DtoConverter;
 
 import com.lawstack.app.model.User;
 
@@ -137,9 +136,16 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    List<User> Allusers() {
+    ResponseEntity<?> Allusers() {
         log.info("Geting all users");
-        return this.userService.getAllUsers();
+
+        List<User> users = this.userService.getAllUsers();
+
+        if(users==null){
+            return ResponseEntity.status(401).body(null);
+        }
+        
+        return ResponseEntity.status(201).body(users);
     }
 
     // delete user
