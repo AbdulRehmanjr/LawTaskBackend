@@ -14,6 +14,10 @@ public interface UserService {
 
      User getUserById(String userId);
 
+     User getUserByIdEdit(String userId);
+
+     User updateUser(User user);
+     
      List<User> getAllUsersByUserNameLike(String userNameLike);
     
      List<User> getAllUsers();
@@ -21,6 +25,10 @@ public interface UserService {
      User getUserByEmail(String email);
 
      void deleteUser(String id);
+
+     void restPassword(int otp,String email);
+
+     User updatePassword(User user);
 
      User updateUserRole(String userId);
 }

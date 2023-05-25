@@ -2,6 +2,7 @@ package com.lawstack.app.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,11 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.lawstack.app.model.Otp;
 import com.lawstack.app.model.User;
 
 import com.lawstack.app.service.UserService;
 
+import io.micrometer.core.ipc.http.HttpSender.Response;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -125,7 +128,7 @@ public class UserController {
 
         if (result == null) {
             log.error("Users not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         log.info("User Found.");
 
@@ -135,6 +138,80 @@ public class UserController {
 
     }
 
+    @GetMapping("/edit/{userId}")
+    public ResponseEntity<?> getUserByIdEdit(@PathVariable("userId") String userId) {
+
+        
+        User result = this.userService.getUserByIdEdit(userId);
+
+        if (result == null) {
+            log.error("Users not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        log.info("User Found.");
+
+        
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+
+    }
+
+    @PostMapping("/forgot-password/{email}")
+    ResponseEntity<?> restPassword(@PathVariable String email,@RequestBody Otp otp) {
+        log.info("Resting the password");
+
+        User user = this.userService.getUserByEmail(email);
+
+        if(user == null){
+            return ResponseEntity.status(401).body(null);
+        }
+        this.userService.restPassword(otp.getOtp(),email);
+        return ResponseEntity.status(201).body(user);
+    }
+
+    @PostMapping("/change-password/{email}")
+    ResponseEntity<?> change(@PathVariable String email,@RequestBody User password) {
+        log.info("Resting the password");
+
+        User user = this.userService.getUserByEmail(email);
+
+        if(user == null){
+            return ResponseEntity.status(401).body(null);
+        }
+        user.setPassword(password.getPassword());
+       user =  this.userService.updatePassword(user);
+
+        return ResponseEntity.status(201).body(user);
+    }
+    @PostMapping("/edit")
+    public ResponseEntity<?> updateUser(@RequestParam("file") MultipartFile profilePicture, String user) {
+
+    
+        User n_user = new User();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            n_user = objectMapper.readValue(user, User.class);
+        } catch (JsonProcessingException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+
+        try {
+            n_user.setProfilePicture(profilePicture.getBytes());
+        } catch (IOException e) {
+            log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
+            return null;
+        }
+
+        n_user = this.userService.updateUser(n_user);
+        if (n_user != null) {
+            return ResponseEntity.status(201).body(n_user);
+        }
+        return ResponseEntity.status(401).body(null);
+
+    }
     @GetMapping("/all")
     ResponseEntity<?> Allusers() {
         log.info("Geting all users");

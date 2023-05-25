@@ -162,6 +162,7 @@ public class PaymentServiceImp implements PaymentService {
                                                                 .build())
                                                 .build())
                                 .build())
+                .putMetadata("user", order.getUser().getUserId())
                 .build();
         Session session;
 

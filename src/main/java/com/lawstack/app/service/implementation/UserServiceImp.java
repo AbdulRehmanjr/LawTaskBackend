@@ -110,6 +110,24 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public User getUserByIdEdit(String userId) {
+        
+        log.info("fetching user with id {}", userId);
+
+        User user =null;
+
+        try {
+           user = this.userRepo.findById(userId).get();
+        } catch (Exception e) {
+            log.error("Error {}",e.getMessage());
+        }
+        
+
+        return user;
+    }
+
+   
+    @Override
     public List<User> getAllUsersByUserNameLike(String userNameLike) {
 
         log.info("All users with given pattern in them.");
@@ -173,7 +191,26 @@ public class UserServiceImp implements UserService {
         
 
     }
+    @Override
+    public User updateUser(User user) {
+        log.info("UPDATE : user");
 
-   
+        return this.userRepo.save(user);
+    }
+    @Override
+    public void restPassword(int otp,String email) {
+       log.info("resteing the password");
+
+       String message = "Your Otp is : " + otp;
+       this.emailService.sendMail(email,"Password Reset", message);
+    }
+    @Override
+    public User updatePassword(User user) {
+        log.info("savng new password");
+
+        user.setPassword(encoder.encode(user.getPassword()));
+        return this.userRepo.save(user);
+    }
+  
 
 }

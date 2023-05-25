@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <property name="LOG_DIR" value="/project/Loggings"></property>
+    <property name="LOG_DIR" value="D://LOGS//lawtask"></property>
     <property name="FILE_PREFIX" value="lawtask"></property>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}//${FILE_PREFIX}.log</file>

@@ -30,8 +30,9 @@ import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -161,7 +162,7 @@ public class CheckoutController {
                         System.out.println("PaymentMethod was attached to a Customer!");
                         break;
 
-                        case "checkout.session.completed":
+                    case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
                         log.info("Session: {}", session);
                         if (session != null) {
@@ -169,25 +170,28 @@ public class CheckoutController {
                                 String subscriptionId = session.getSubscription();
                                 String customerId = session.getCustomer();
                                 String email = "";
-                    
+
                                 try {
                                     Customer customer = Customer.retrieve(customerId);
                                     Subscription subscription = Subscription.retrieve(subscriptionId);
-                    
-                                    String discountId = subscription.getDiscount() != null ? subscription.getDiscount().getId() : null;
-                                    Price price = Price.retrieve(subscription.getItems().getData().get(0).getPrice().getId());
+
+                                    String discountId = subscription.getDiscount() != null
+                                            ? subscription.getDiscount().getId()
+                                            : null;
+                                    Price price = Price
+                                            .retrieve(subscription.getItems().getData().get(0).getPrice().getId());
                                     Product product = Product.retrieve(price.getProduct());
-                    
+
                                     email = customer.getEmail();
-                    
+
                                     // Update the seller info after subscription
                                     CardSubscription card = new CardSubscription();
                                     card.setSubscription(product.getName());
-                    
+
                                     this.sellerService.addSubscription(card, email, price.getUnitAmount());
-                    
+
                                     this.subService.addCustomer(email, customerId, subscriptionId, discountId);
-                    
+
                                     this.emailService.sendMail(email, "Purchase of Subscription",
                                             "Thanks for purchasing the subscription. Please visit your dashboard to add jobs.");
                                 } catch (StripeException e) {
@@ -197,8 +201,16 @@ public class CheckoutController {
                                 }
                             } else {
                                 PaymentIntent payment = PaymentIntent.retrieve(session.getPaymentIntent());
+                                Map<String, String> metadata = session.getMetadata();
+
+                                Customer customer = Customer.retrieve(customerId);
+
+                                String email = customer.getEmail();
+                                
+                                String user = metadata.get("user");
                                 Dashboard dashboard = new Dashboard();
                                 dashboard.setIncome(payment.getAmount() / 100.0);
+                                this.emailService.sendMail(user, "Payment invoice", "Payment made by "+email);
                                 this.dashService.updateDashboard(dashboard);
                             }
                         }
