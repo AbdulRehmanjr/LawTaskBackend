@@ -37,16 +37,16 @@ public class PaymentServiceImp implements PaymentService {
     @Autowired
     private SubscriptionService subService;
 
-    @Value("${My_Secert}")
+    @Value("${stripe_secert_key}")
     private String STRIPE_API;
 
-    @Value("${Product_1}")
+    @Value("${Dew_Dropper}")
     private String dewString;
 
-    @Value("${Product_2}")
+    @Value("${Sprinkle_Starter}")
     private String sprinkleString;
 
-    @Value("${Product_3}")
+    @Value("${Rain_Maker}")
     private String rainString;
 
     @Autowired
