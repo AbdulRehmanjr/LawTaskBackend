@@ -97,6 +97,12 @@ public class SubscriptionServiceImp implements SubscriptionService{
 
         this.subRepo.save(response);
     }
+
+
+    @Override
+    public Subscription updateSubscription(Subscription subscription) {
+       return this.subRepo.save(subscription);
+    }
     
     
 }

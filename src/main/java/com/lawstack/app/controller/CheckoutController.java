@@ -187,13 +187,12 @@ public class CheckoutController {
                                     // Update the seller info after subscription
                                     CardSubscription card = new CardSubscription();
                                     card.setSubscription(product.getName());
-
+                                    
                                     this.sellerService.addSubscription(card, email, price.getUnitAmount());
 
                                     this.subService.addCustomer(email, customerId, subscriptionId, discountId);
 
-                                    this.emailService.sendMail(email, "Purchase of Subscription",
-                                            "Thanks for purchasing the subscription. Please visit your dashboard to add jobs.");
+                   
                                 } catch (StripeException e) {
                                     log.error("ERROR: {} MESSAGE: {}", e.getCause(), e.getMessage());
                                 } catch (Exception e) {

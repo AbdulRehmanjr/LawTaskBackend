@@ -1,5 +1,7 @@
 package com.lawstack.app.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,21 @@ public class SellerController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/all")
+    ResponseEntity<?> getAllSellers() {
+
+        log.info("Received request to get sellers");
+
+        List<Seller> response = this.sellerService.getAll();
+
+        if (response == null) {
+            
+            return ResponseEntity.status(401).body(null);
+        }
+
+        return ResponseEntity.status(201).body(response);
     }
 
 }

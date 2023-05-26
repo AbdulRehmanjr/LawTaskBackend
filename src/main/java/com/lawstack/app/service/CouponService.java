@@ -13,5 +13,8 @@ public interface CouponService {
 
     List<Coupon> getAllCoupon();
 
+    Coupon getById(String id);
+
+
     void deleteCoupon(String id);
 }

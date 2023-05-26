@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lawstack.app.model.Coupon;
+import com.lawstack.app.model.Subscription;
 import com.lawstack.app.service.CouponService;
+import com.lawstack.app.service.SubscriptionService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,9 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
+    @Autowired
+    private SubscriptionService subService;
+
     @PostMapping("/save")
     ResponseEntity<?> createCoupon(@RequestBody Coupon coupon) {
 
@@ -39,7 +44,23 @@ public class CouponController {
 
         return ResponseEntity.status(201).body(response);
     }
+    @PostMapping("/giveaway/{email}/{couponId}")
+    ResponseEntity<?> giveAway(@PathVariable String email,@PathVariable String couponId) {
 
+        Subscription subscription = this.subService.getCustomerByEmail(email);
+
+        Coupon coupon = this.couponService.getById(couponId);
+
+        if (subscription == null || coupon == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        subscription.setDiscountId(coupon.getId());
+
+        this.subService.updateSubscription(subscription);
+
+        return ResponseEntity.status(201).body(subscription);
+    }
     @GetMapping("/name/{name}")
     ResponseEntity<?> getCouponByName(@PathVariable String name) {
 

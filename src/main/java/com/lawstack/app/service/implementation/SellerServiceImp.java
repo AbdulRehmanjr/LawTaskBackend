@@ -17,7 +17,7 @@ import com.lawstack.app.model.UserDashboard;
 import com.lawstack.app.repository.SellerRepository;
 
 import com.lawstack.app.service.DashboardService;
-
+import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.SellerAndUserJoinService;
 
 import com.lawstack.app.service.SellerService;
@@ -45,6 +45,9 @@ public class SellerServiceImp implements SellerService {
 
     @Autowired
     private DashboardService dashService;
+
+    @Autowired
+    private EmailService email;
 
 
     /**
@@ -82,8 +85,7 @@ public class SellerServiceImp implements SellerService {
 
     @Override
     public List<Seller> getAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+         return this.sellerRepo.findAll();
     }
 
     @Override
@@ -103,13 +105,23 @@ public class SellerServiceImp implements SellerService {
     public Seller addSubscription(CardSubscription card, String email,long amount) {
 
         Seller seller = this.sellerRepo.findByEmail(email);
+        User user = this.userService.getUserByEmail(email);
         if (seller == null) {
             log.error("Seller may not exist with the given email.");
             return null;
         }
         
         Dashboard dash = new Dashboard();
-        UserDashboard udash = this.udashService.getUserDashboardByEmail(email);
+        UserDashboard response = this.udashService.getUserDashboardByEmail(email);
+        UserDashboard udash = new UserDashboard();
+        if(response!=null){
+            udash.setEmail(response.getEmail());
+            udash.setSellerType(response.getSellerType());
+            udash.setId(response.getId());
+            udash.setJobs(response.getJobs());
+            udash.setRevenue(response.getRevenue());
+            udash.setUserId(response.getUserId());
+        }
         
         if (card.getSubscription().equals("Dew Dropper")) {
             log.info("got dew");
@@ -132,14 +144,19 @@ public class SellerServiceImp implements SellerService {
             dash.setIncome(amount / 100.0);
         
             udash.setSellerType("RAINMAKER");
-        }
-        
+        }   
+        udash.setEmail(email);
+        udash.setUserId(user.getUserId());
         seller.setActive(true);
         seller.setSellerType(udash.getSellerType());
         this.sellerRepo.save(seller);
         
-        this.udashService.updateDashboard(udash);
+        this.udashService.saveDashboard(udash);
         this.dashService.updateDashboard(dash);
+        String message = """
+                Subscription bought sucessfull
+                """;
+        this.email.sendMail(email, "Thanks for buying subscription", message);
         return seller;
         
     }

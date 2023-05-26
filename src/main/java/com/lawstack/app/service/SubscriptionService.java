@@ -13,5 +13,7 @@ public interface SubscriptionService {
 
     void deleteSubscription(String email);
 
+    Subscription updateSubscription(Subscription subscription);
+
     Customer retrievCustomer(String id);
 }

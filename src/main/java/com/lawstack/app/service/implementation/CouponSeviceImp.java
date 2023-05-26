@@ -59,4 +59,9 @@ public class CouponSeviceImp implements CouponService{
         
     }
 
+    @Override
+    public Coupon getById(String id) {
+       return this.couponRepository.findById(id).get();
+    }
+
 }

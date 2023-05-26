@@ -105,8 +105,15 @@ public class UserServiceImp implements UserService {
     public User getUserById(String userId) {
 
         log.info("fetching user with id {}", userId);
+        try {
+            User user = this.userRepo.findById(userId).get();    
+            return user;
+        } catch (Exception e) {
+            return null;
+        }
+        
 
-        return this.userRepo.findById(userId).get();
+        
     }
 
     @Override
