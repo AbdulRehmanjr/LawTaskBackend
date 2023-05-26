@@ -38,7 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Autowired
         private UserDetailServiceImp userDetailService;
 
-        final private String[] origin = { "http://localhost:4200", "https://checkout.stripe.com",
+        final private String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
                         "http://139.59.215.241",
                         "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
 
@@ -100,7 +100,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Bean
         CorsFilter corsFilter() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Arrays.asList(origin));
+                configuration.setAllowedOrigins(Arrays.asList(origins));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
                 configuration.setAllowedHeaders(Arrays.asList("*"));
                 configuration.setAllowCredentials(true);
