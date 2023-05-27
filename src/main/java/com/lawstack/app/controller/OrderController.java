@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,25 +32,26 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Value("${web_domain}")
+    private String Domain;
+
     @PostMapping("/register")
     public ResponseEntity<?> resgisterOrder(@RequestBody Order order) {
 
         Order n_order = this.orderService.saveOrder(order);
 
-        
         if (n_order != null) {
-            String URL = "http://localhost:4200/home/order-confirm?orderId="+n_order.getId();
+            String URL = Domain+"/home/order-confirm?orderId=" + n_order.getId();
             return ResponseEntity.status(201).body(URL);
         }
         return ResponseEntity.status(401).body("Error in creation order");
 
     }
 
-
     @PostMapping("/register-confirmed")
     public ResponseEntity<?> OrderConfirmed(@RequestParam("requirement") MultipartFile file, String order) {
 
-         Order n_order = new Order();
+        Order n_order = new Order();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,7 +59,7 @@ public class OrderController {
             n_order = objectMapper.readValue(order, Order.class);
         } catch (JsonProcessingException e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error in creation order");
+            return ResponseEntity.status(404).body("Error in creation order");
         }
 
         try {
@@ -65,27 +67,29 @@ public class OrderController {
             n_order.setDocumentType(file.getContentType());
         } catch (IOException e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error in creation order");        }
+            ResponseEntity.status(404).body("Error in creation order");
+        }
 
         n_order = this.orderService.updateOrder(n_order);
         if (n_order != null) {
             return ResponseEntity.status(201).body(n_order);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error in creation order");
+        return ResponseEntity.status(404).body("Error in creation order");
 
     }
 
     @PostMapping("/done")
-    ResponseEntity<?> jobDone(@RequestBody Order order){
+    ResponseEntity<?> jobDone(@RequestBody Order order) {
         log.info("Job completed updating its status");
 
         Order response = this.orderService.orderDone(order);
 
-        if(response != null){
+        if (response != null) {
             return ResponseEntity.status(201).body(order);
         }
         return ResponseEntity.status(404).body(null);
     }
+
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAllOrders() {
 
@@ -112,6 +116,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
 
     }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getOrderByUId(@PathVariable("userId") String userId) {
 
@@ -125,6 +130,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
 
     }
+
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getOrderByEmail(@PathVariable("email") String email) {
 
@@ -138,6 +144,7 @@ public class OrderController {
         return ResponseEntity.status(201).body(result);
 
     }
+
     @GetMapping("/customer/{id}")
     public ResponseEntity<?> getOrderByCustomerId(@PathVariable("id") String id) {
 
@@ -151,6 +158,7 @@ public class OrderController {
         return ResponseEntity.status(201).body(result);
 
     }
+
     // delete order
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") String id) {

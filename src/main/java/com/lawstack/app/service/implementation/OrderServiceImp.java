@@ -10,7 +10,6 @@ import com.lawstack.app.model.Job;
 import com.lawstack.app.model.Order;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.OrderRepository;
-import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.JobService;
 import com.lawstack.app.service.OrderService;
 import com.lawstack.app.service.UserService;
@@ -30,8 +29,7 @@ public class OrderServiceImp implements OrderService{
     @Autowired
     private JobService jobService;
 
-    @Autowired
-    private EmailService emailService;
+
     
     @Override
     public Order saveOrder(Order order) {
@@ -110,11 +108,11 @@ public class OrderServiceImp implements OrderService{
 
     @Override
     public Order updateOrder(Order order) {
-        log.info("Updaing order");
+        log.info("Updating order");
         Order response = this.orderRepository.findByIdAndConfirmedFalse(order.getId());
         
         if(response!=null){
-
+            log.info("order found");
             response.setCustomerEmail(order.getCustomerEmail());
             response.setCustomerName(order.getCustomerName());
             response.setRequirementFile(order.getRequirementFile());
@@ -122,19 +120,8 @@ public class OrderServiceImp implements OrderService{
             response.setConfirmed(true);
             response.setDocumentType(order.getDocumentType());
             response = this.orderRepository.save(response);
-            String message ="""
-                    Customer made an Order.Please check it.
-                    Email: %s
-                    User Name: %s
-                    Visit your dashboard for more details.
-                    """.formatted(order.getCustomerEmail(),order.getCustomerName());
-                    try {
-                        this.emailService.sendMail(order.getCustomerEmail(), "Order Received" , message);
-                    } catch (Exception e) {
-                        log.info("Error {} ",e.getMessage());
-                    }
             
-
+    
             return response;
         }
 

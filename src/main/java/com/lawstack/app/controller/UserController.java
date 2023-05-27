@@ -2,7 +2,6 @@ package com.lawstack.app.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ import com.lawstack.app.model.User;
 
 import com.lawstack.app.service.UserService;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

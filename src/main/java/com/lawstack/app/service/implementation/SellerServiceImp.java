@@ -150,8 +150,11 @@ public class SellerServiceImp implements SellerService {
         seller.setActive(true);
         seller.setSellerType(udash.getSellerType());
         this.sellerRepo.save(seller);
-        
-        this.udashService.saveDashboard(udash);
+
+        if(response==null){
+            this.udashService.saveDashboard(udash);
+        }
+        this.udashService.updateDashboard(udash);
         this.dashService.updateDashboard(dash);
         String message = """
                 Subscription bought sucessfull

@@ -9,7 +9,8 @@ public interface PaymentService {
     String projectPayment(Order order);
 
     String updateSubscription(String email);
+    
     String getSubscriptionId(String email);
     
-    String removeSubscription(String email);
+    
 }

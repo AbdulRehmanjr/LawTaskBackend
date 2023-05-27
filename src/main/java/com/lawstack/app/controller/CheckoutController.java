@@ -6,16 +6,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lawstack.app.model.CardSubscription;
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Order;
-
+import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.model.PaymentRequest;
 import com.lawstack.app.model.Seller;
+import com.lawstack.app.model.User;
+import com.lawstack.app.model.UserDashboard;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
-
+import com.lawstack.app.service.OrderPaymentService;
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
-
+import com.lawstack.app.service.UserDashBoardService;
+import com.lawstack.app.service.UserService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -63,7 +66,16 @@ public class CheckoutController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserService userService;
+
     private String customerId = "";
+
+    @Autowired
+    private OrderPaymentService orderPaymentService;
+
+    @Autowired
+    private UserDashBoardService uDashBoardService;
 
     @Value("${stripe_webhook}")
     private String endpointSecret;
@@ -187,12 +199,11 @@ public class CheckoutController {
                                     // Update the seller info after subscription
                                     CardSubscription card = new CardSubscription();
                                     card.setSubscription(product.getName());
-                                    
+
                                     this.sellerService.addSubscription(card, email, price.getUnitAmount());
 
                                     this.subService.addCustomer(email, customerId, subscriptionId, discountId);
 
-                   
                                 } catch (StripeException e) {
                                     log.error("ERROR: {} MESSAGE: {}", e.getCause(), e.getMessage());
                                 } catch (Exception e) {
@@ -201,15 +212,67 @@ public class CheckoutController {
                             } else {
                                 PaymentIntent payment = PaymentIntent.retrieve(session.getPaymentIntent());
                                 Map<String, String> metadata = session.getMetadata();
-
+                                String customerId = payment.getCustomer();
                                 Customer customer = Customer.retrieve(customerId);
 
                                 String email = customer.getEmail();
-                                
+                                String name = customer.getName();
+
+                                /**
+                                 * .putMetadata("user", order.getUser().getUserId())
+                                 * .putMetadata("jobId", order.getJob().getJobId())
+                                 * .putMetadata("buyerId", order.getCustomerId())
+                                 * .putMetadata("Price", String.valueOf(order.getPrice()))
+                                 * .build();
+                                 */
                                 String user = metadata.get("user");
+                                String jobId = metadata.get("jobId");
+                                String buyerId = metadata.get("buyerId");
+                                Double price = Double.parseDouble(metadata.get("Price"));
+                                
+
+                                log.info("Meta of user_++++++++++++++++++++++++++++++ {}", user);
                                 Dashboard dashboard = new Dashboard();
                                 dashboard.setIncome(payment.getAmount() / 100.0);
-                                this.emailService.sendMail(user, "Payment invoice", "Payment made by "+email);
+
+                                User response = this.userService.getUserById(user);
+
+                                String paymentMessage = """
+                                        User: %s paid the amount of %s USD to lawtasks for your job
+                                        """.formatted(email, payment.getAmount() / 100.0);
+                                this.emailService.sendMail(response.getEmail(), "Payment invoice", paymentMessage);
+
+                                String message = """
+                                        Customer made an Order.Please check it.
+                                        Email: %s
+                                        User Name: %s
+                                        Visit your dashboard for more details.
+                                        """.formatted(email, name);
+
+                                OrderPayment pay = new OrderPayment();
+                                pay.setCustomerId(buyerId);
+                                pay.setStripeId(customer.getId());
+                                pay.setEmail(customer.getEmail());
+                                pay.setName(customer.getName());
+                                pay.setJobId(jobId);
+                                pay.setSellerId(user);
+                                pay.setPrice(price);
+
+                                UserDashboard dash = this.uDashBoardService
+                                        .getInfoByUserId(user);
+
+                                if (dash != null) {
+                                    dash.setRevenue(dash.getRevenue() + price);
+                                    this.uDashBoardService.updateDashboard(dash);
+                                }
+
+                                this.orderPaymentService.saveOrderPayment(pay);
+
+                                try {
+                                    this.emailService.sendMail(response.getEmail(), "Order Received", message);
+                                } catch (Exception e) {
+                                    log.info("Error {} ", e.getMessage());
+                                }
                                 this.dashService.updateDashboard(dashboard);
                             }
                         }

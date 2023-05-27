@@ -23,7 +23,6 @@ import com.lawstack.app.service.FreelancerService;
 import com.lawstack.app.service.SellerAndUserJoinService;
 import com.lawstack.app.service.SellerRequestService;
 import com.lawstack.app.service.SellerService;
-import com.lawstack.app.service.UserDashBoardService;
 import com.lawstack.app.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +43,6 @@ public class SellerRequestServiceImp implements SellerRequestService {
     @Autowired
     private FreelancerService freelancerService;
 
-    @Autowired
-    private UserDashBoardService udService;
 
     @Autowired
     private EmailService emailService;

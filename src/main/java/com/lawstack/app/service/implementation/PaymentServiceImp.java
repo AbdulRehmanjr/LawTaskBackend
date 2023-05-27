@@ -7,16 +7,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.lawstack.app.model.Order;
-import com.lawstack.app.model.OrderPayment;
+
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.Subscription;
-import com.lawstack.app.model.UserDashboard;
+
 import com.lawstack.app.service.CouponService;
-import com.lawstack.app.service.OrderPaymentService;
+
 import com.lawstack.app.service.PaymentService;
 import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
-import com.lawstack.app.service.UserDashBoardService;
 import com.lawstack.app.utils.enums.JobNumber;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -40,20 +39,16 @@ public class PaymentServiceImp implements PaymentService {
     @Value("${stripe_secert_key}")
     private String STRIPE_API;
 
-    @Value("${Dew_Dropper}")
+    @Value("${Dew_Dropper }")
     private String dewString;
 
-    @Value("${Sprinkle_Starter}")
+    @Value("${Sprinkle_Starter }")
     private String sprinkleString;
 
     @Value("${Rain_Maker}")
     private String rainString;
 
-    @Autowired
-    private OrderPaymentService orderPaymentService;
 
-    @Autowired
-    private UserDashBoardService uDashBoardService;
 
     @Autowired
     private SellerService sellerService;
@@ -196,29 +191,14 @@ public class PaymentServiceImp implements PaymentService {
                                                 .build())
                                 .build())
                 .putMetadata("user", order.getUser().getUserId())
+                .putMetadata("jobId", order.getJob().getJobId())
+                .putMetadata("buyerId", order.getCustomerId())
+                .putMetadata("Price", String.valueOf(order.getPrice()))
                 .build();
         Session session;
 
         try {
             session = Session.create(params);
-
-            OrderPayment pay = new OrderPayment();
-            pay.setCustomerId(order.getCustomerId());
-            pay.setStripeId(customer.getId());
-            pay.setEmail(order.getCustomerEmail());
-            pay.setName(order.getCustomerName());
-            pay.setJobId(order.getJob().getJobId());
-            pay.setSellerId(order.getUser().getUserId());
-            pay.setPrice(order.getPrice());
-
-            UserDashboard dash = this.uDashBoardService.getInfoByUserId(order.getUser().getUserId());
-
-            if (dash != null) {
-                dash.setRevenue(dash.getRevenue() + order.getPrice());
-                this.uDashBoardService.updateDashboard(dash);
-            }
-
-            this.orderPaymentService.saveOrderPayment(pay);
 
             return session.getUrl();
         } catch (Exception e) {
@@ -287,7 +267,7 @@ public class PaymentServiceImp implements PaymentService {
             }
         }
         try {
-            log.info("retriving");
+            
             Customer customer = Customer.retrieve(sub.getCustomerId());
 
             return customer;
@@ -317,15 +297,6 @@ public class PaymentServiceImp implements PaymentService {
         }
     }
 
-    @Override
-    @Deprecated
-    public String removeSubscription(String email) {
-
-        Subscription response = this.subService.getCustomerByEmail(email);
-
-        return null;
-
-    }
 
     @Override
     public String getSubscriptionId(String email) {
