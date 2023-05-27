@@ -38,11 +38,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Autowired
         private UserDetailServiceImp userDetailService;
 
-        // final private String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
-        //                 "http://139.59.215.241",
-        //                 "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
+        final private String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
+                        "http://139.59.215.241",
+                        "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
 
-        final private String[] origins = {"http://localhost:4200"};
+       
         @Bean
         AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
