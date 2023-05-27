@@ -187,16 +187,13 @@ public class CheckoutController {
                                 Customer customer = Customer.retrieve(customerId);
                                 email = customer.getEmail();
 
-                                // Update the subscription details in your application's database
-                                // Retrieve the relevant subscription record from your database based on
-                                // subscriptionId
+                               
                                 com.lawstack.app.model.Subscription  existingSubscription = this.subService.getCustomerByEmail(email);
                                 if (existingSubscription != null) {
                                     
                                    
                                     existingSubscription.setDateValid(LocalDate.now().plusDays(30));
-                                    // Update other relevant fields
-                                    // ...
+                                
                                     this.subService.updateSubscription(existingSubscription);
                                     log.info("Subscription data updated in the database.");
                                 }

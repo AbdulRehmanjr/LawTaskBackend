@@ -39,10 +39,10 @@ public class PaymentServiceImp implements PaymentService {
     @Value("${stripe_secert_key}")
     private String STRIPE_API;
 
-    @Value("${Dew_Dropper }")
+    @Value("${Dew_Dropper}")
     private String dewString;
 
-    @Value("${Sprinkle_Starter }")
+    @Value("${Sprinkle_Starter}")
     private String sprinkleString;
 
     @Value("${Rain_Maker}")
