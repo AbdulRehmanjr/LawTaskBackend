@@ -35,6 +35,7 @@ import com.stripe.net.Webhook;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,7 +174,40 @@ public class CheckoutController {
                         // PaymentMethod attached
                         System.out.println("PaymentMethod was attached to a Customer!");
                         break;
+                    case "customer.subscription.updated":
+                        Subscription updateSubscription = (Subscription) event.getDataObjectDeserializer().getObject()
+                                .orElse(null);
+                        log.info("Subscription: {}", updateSubscription);
+                        if (updateSubscription != null) {
+                            String subscriptionId = updateSubscription.getId();
+                            String customerId = updateSubscription.getCustomer();
+                            String email = "";
 
+                            try {
+                                Customer customer = Customer.retrieve(customerId);
+                                email = customer.getEmail();
+
+                                // Update the subscription details in your application's database
+                                // Retrieve the relevant subscription record from your database based on
+                                // subscriptionId
+                                com.lawstack.app.model.Subscription  existingSubscription = this.subService.getCustomerByEmail(email);
+                                if (existingSubscription != null) {
+                                    
+                                   
+                                    existingSubscription.setDateValid(LocalDate.now().plusDays(30));
+                                    // Update other relevant fields
+                                    // ...
+                                    this.subService.updateSubscription(existingSubscription);
+                                    log.info("Subscription data updated in the database.");
+                                }
+                            } catch (StripeException e) {
+                                log.error("ERROR: {} MESSAGE: {}", e.getCause(), e.getMessage());
+                            } catch (Exception e) {
+                                log.error("ERROR: {}", e.getMessage());
+                            }
+                        }
+
+                        break;
                     case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
                         log.info("Session: {}", session);
@@ -218,20 +252,12 @@ public class CheckoutController {
                                 String email = customer.getEmail();
                                 String name = customer.getName();
 
-                                /**
-                                 * .putMetadata("user", order.getUser().getUserId())
-                                 * .putMetadata("jobId", order.getJob().getJobId())
-                                 * .putMetadata("buyerId", order.getCustomerId())
-                                 * .putMetadata("Price", String.valueOf(order.getPrice()))
-                                 * .build();
-                                 */
                                 String user = metadata.get("user");
                                 String jobId = metadata.get("jobId");
                                 String buyerId = metadata.get("buyerId");
                                 Double price = Double.parseDouble(metadata.get("Price"));
-                                
 
-                                log.info("Meta of user_++++++++++++++++++++++++++++++ {}", user);
+                      
                                 Dashboard dashboard = new Dashboard();
                                 dashboard.setIncome(payment.getAmount() / 100.0);
 
