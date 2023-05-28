@@ -22,108 +22,113 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class JobServiceImp  implements JobService{
-    
+public class JobServiceImp implements JobService {
 
-    @Autowired
-    private JobsRepository jobRepo;
-    
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private JobsRepository jobRepo;
 
-    @Autowired
-    private SellerService sellerService;
+  @Autowired
+  private UserService userService;
 
-    @Autowired
-    private DashboardService dashService;
+  @Autowired
+  private SellerService sellerService;
 
-    @Autowired
-    private UserDashBoardService udService;
+  @Autowired
+  private DashboardService dashService;
 
-    @Override
-    public Job createJob(Job job) {
+  @Autowired
+  private UserDashBoardService udService;
 
-        log.info("Insert new Job  in database");
+  @Override
+  public Job createJob(Job job) {
 
-        String userId = job.getUser().getUserId();
-        User user = this.userService.getUserById(userId);
+    log.info("Insert new Job  in database");
 
-        if(user==null){
-            log.error("User not found with given userId");
-            return null;
-        }
-        //* check seller has permission to add job or job slot free */
-        Seller seller = this.sellerService.getSellerByUserId(userId);
+    String userId = job.getUser().getUserId();
+    User user = this.userService.getUserById(userId);
 
-        if(seller.getCurrentJobs()==seller.getMaxJobs()){
-            return null;
-        }
-        
-        // setting unique id
-        String id = UUID.randomUUID().toString();
-        job.setJobId(id);
+    if (user == null) {
+      log.error("User not found with given userId");
+      return null;
+    }
+    // * check seller has permission to add job or job slot free */
+    Seller seller = this.sellerService.getSellerByUserId(userId);
 
-        seller.setCurrentJobs(seller.getCurrentJobs()+1);
-        
-        Job response = this.jobRepo.save(job);
-        
-        if(response!=null){
-            this.sellerService.updateJobStatus(seller);  
-            Dashboard dashboard = new Dashboard();
-            UserDashboard udash = new UserDashboard();
-
-            udash.setJobs(1);
-            udash.setUserId(user.getUserId());
-            this.udService.updateDashboard(udash);
-            dashboard.setJobs(1);
-            this.dashService.updateDashboard(dashboard);
-            return job; 
-        }
-        return null;
-
+    if (seller.getCurrentJobs() == seller.getMaxJobs()) {
+      return null;
     }
 
-    @Override
-    public Job getByJobId(String jobId) {
-       log.info("Get job by its id");
+    // setting unique id
+    String id = UUID.randomUUID().toString();
+    job.setJobId(id);
 
-       return this.jobRepo.findById(jobId).get();
+    seller.setCurrentJobs(seller.getCurrentJobs() + 1);
+
+    Job response = this.jobRepo.save(job);
+
+    if (response != null) {
+      this.sellerService.updateJobStatus(seller);
+      Dashboard dashboard = new Dashboard();
+      UserDashboard udash = new UserDashboard();
+
+      udash.setJobs(1);
+      udash.setUserId(user.getUserId());
+      this.udService.updateDashboard(udash);
+      dashboard.setJobs(1);
+      this.dashService.updateDashboard(dashboard);
+      return job;
     }
+    return null;
 
-    @Override
-    public List<Job> getJobsByUserId(String userId) {
-      log.info("Getting all jobs by User id: {}",userId);
-        
-      List<Job> jobs = this.jobRepo.findAllByUserUserId(userId);
-      
-      if(jobs==null){
-        return null;
-      }
-      return jobs;
+  }
+
+  @Override
+  public Job getByJobId(String jobId) {
+    log.info("Get job by its id");
+    Job job = null;
+    try {
+       job = this.jobRepo.findById(jobId).get();
+    } catch (Exception e) {
+      log.error("Error : {}",e.getMessage());
+      return null;
     }
+    return job;
+  }
 
-    @Override
-    public Job updateJob(Job job) {
-     return null;
+  @Override
+  public List<Job> getJobsByUserId(String userId) {
+    log.info("Getting all jobs by User id: {}", userId);
+
+    List<Job> jobs = this.jobRepo.findAllByUserUserId(userId);
+
+    if (jobs == null) {
+      return null;
     }
+    return jobs;
+  }
 
-    @Override
-    public List<Job> getJobsByJobName(String jobName) {
-      
-      log.info("Fetching all Jobs By Job Name");
+  @Override
+  public Job updateJob(Job job) {
+    return null;
+  }
 
-      List<Job> jobs = this.jobRepo.findAllByJobNameContains(jobName);
+  @Override
+  public List<Job> getJobsByJobName(String jobName) {
 
-      try{
-      if(jobs.isEmpty()){
+    log.info("Fetching all Jobs By Job Name");
+
+    List<Job> jobs = this.jobRepo.findAllByJobNameContains(jobName);
+
+    try {
+      if (jobs.isEmpty()) {
         log.error("Jobs not found");
         return null;
-      }}
-      catch(Exception e ){
-        log.error("Error : {}",e.getMessage());
-        return null;
       }
-      return jobs;
+    } catch (Exception e) {
+      log.error("Error : {}", e.getMessage());
+      return null;
     }
-    
+    return jobs;
+  }
+
 }
