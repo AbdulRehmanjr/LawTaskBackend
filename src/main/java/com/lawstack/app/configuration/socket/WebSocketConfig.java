@@ -10,11 +10,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final  String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
+                        "http://139.59.215.241",
+                        "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
    @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
         .addEndpoint("/ws")
-        .setAllowedOriginPatterns("http://localhost:4200")
+        .setAllowedOriginPatterns(origins)
         .withSockJS();
     }
 

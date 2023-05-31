@@ -154,19 +154,6 @@ public class CheckoutController {
                     // ! may be handle later
                     case "payment_intent.succeeded":
 
-                        // PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-
-                        // Customer pay_Customer = null;
-                        // try {
-                        // // * get costomer form database if not exist make new one
-
-                        // log.info("Payment Intent : {}", paymentIntent);
-                        // log.
-
-                        // } catch (Exception e) {
-                        // log.error("Customer alreday exist in data base");
-                        // }
-
                         log.info("PaymentIntent was successful!");
                         break;
                     case "payment_method.attached":
@@ -302,6 +289,7 @@ public class CheckoutController {
                         break;
                     case "customer.subscription.deleted":
 
+                        log.info("Subscrption deleted");
                         try {
                             Customer response = Customer.retrieve(this.customerId);
 
@@ -316,8 +304,7 @@ public class CheckoutController {
             } else {
                 log.error("Error while making the event object serialization");
             }
-            // stripeObject.toJson();
-            // Handle the event
+            
 
             return ResponseEntity.ok().build();
         } catch (SignatureVerificationException e) {

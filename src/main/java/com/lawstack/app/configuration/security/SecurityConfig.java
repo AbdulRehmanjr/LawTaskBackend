@@ -38,7 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Autowired
         private UserDetailServiceImp userDetailService;
 
-        final private String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
+        private final  String[] origins = { "http://localhost:4200", "https://checkout.stripe.com",
                         "http://139.59.215.241",
                         "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241" };
 

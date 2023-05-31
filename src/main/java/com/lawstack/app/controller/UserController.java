@@ -122,7 +122,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable("userId") String userId) {
 
-        //DtoConverter dtoConverter = new DtoConverter();
+        
         User result = this.userService.getUserById(userId);
 
         if (result == null) {
@@ -131,7 +131,7 @@ public class UserController {
         }
         log.info("User Found.");
 
-        // UserDto user = dtoConverter.UserToDto(result);
+        
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
 
@@ -182,31 +182,42 @@ public class UserController {
 
         return ResponseEntity.status(201).body(user);
     }
-    @PostMapping("/edit")
+    @PostMapping("/edit/file")
     public ResponseEntity<?> updateUser(@RequestParam("file") MultipartFile profilePicture, String user) {
 
     
-        User n_user = new User();
+        User nUser = new User();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            n_user = objectMapper.readValue(user, User.class);
+            nUser = objectMapper.readValue(user, User.class);
         } catch (JsonProcessingException e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
         }
 
         try {
-            n_user.setProfilePicture(profilePicture.getBytes());
+            nUser.setProfilePicture(profilePicture.getBytes());
         } catch (IOException e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
             return null;
         }
 
-        n_user = this.userService.updateUser(n_user);
-        if (n_user != null) {
-            return ResponseEntity.status(201).body(n_user);
+        nUser = this.userService.updateUser(nUser);
+        if (nUser != null) {
+            return ResponseEntity.status(201).body(nUser);
+        }
+        return ResponseEntity.status(401).body(null);
+
+    }
+    @PostMapping("/edit")
+    public ResponseEntity<?> updateUserNFile(@RequestBody User user) {
+
+        log.info("Request to update the user without file");
+       User response =  this.userService.updateUser(user);
+        if (response != null) {
+            return ResponseEntity.status(201).body(response);
         }
         return ResponseEntity.status(401).body(null);
 
