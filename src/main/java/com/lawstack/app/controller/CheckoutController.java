@@ -140,7 +140,7 @@ public class CheckoutController {
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
-
+            log.info("webhook");
         try {
             Event event = Webhook.constructEvent(payload, signature, endpointSecret);
 
