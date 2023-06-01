@@ -69,8 +69,7 @@ public class SubscriptionServiceImp implements SubscriptionService{
         
         log.info("Geting already existed subscription by email : {}",email);
 
-        Subscription sub = this.subRepo.findByEmail(email);
-        return sub;
+        return  this.subRepo.findByEmail(email);
     }
 
     @Override

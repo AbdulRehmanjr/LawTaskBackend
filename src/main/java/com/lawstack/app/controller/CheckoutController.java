@@ -275,6 +275,9 @@ public class CheckoutController {
         log.info("Request to cancel the subscription");
         String id = this.paymentService.getSubscriptionId(email);
 
+        if(id == null){
+            return ResponseEntity.status(404).body(null);
+        }
         Subscription subscription;
         try {
             subscription = Subscription.retrieve(id);
