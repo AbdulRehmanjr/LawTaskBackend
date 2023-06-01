@@ -44,6 +44,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         "https://dashboard.stripe.com",
                         "https://154.192.170.22",
                         "https://api.stripes.com",
+                        "https://js.stripe.com",
                         "https://eventhooks.stripe.com"
                  };
 
