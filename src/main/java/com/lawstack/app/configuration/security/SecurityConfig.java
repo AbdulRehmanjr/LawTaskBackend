@@ -40,7 +40,9 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         private final  String[] origins = { "http://localhost:4200", "https://hooks.stripe.com","https://r.stripe.coom","https://w",
                         "http://139.59.215.241",
-                        "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241","https://dashboard.stripe.com",
+                        "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241",
+                        "https://dashboard.stripe.com",
+                        "https://154.192.170.22",
                         "https://eventhooks.stripe.com"
                  };
 

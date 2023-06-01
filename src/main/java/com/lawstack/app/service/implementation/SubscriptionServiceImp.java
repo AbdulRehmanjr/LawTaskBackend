@@ -68,8 +68,16 @@ public class SubscriptionServiceImp implements SubscriptionService{
     public Subscription getCustomerByEmail(String email) {
         
         log.info("Geting already existed subscription by email : {}",email);
-
-        return  this.subRepo.findByEmail(email);
+        Subscription sub;
+        try {
+           sub =  this.subRepo.findByEmail(email);
+           return sub;
+        } catch (Exception e) {
+            log.error("Customer NOT FOUND ");
+            return null;
+        }
+       
+        
     }
 
     @Override
