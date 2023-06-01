@@ -93,7 +93,7 @@ public class CheckoutController {
     private String endpointSecret;
     
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleWebhookEvent(@RequestBody String payload,
+    public ResponseEntity<?> handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
             log.info("webhook");
         try {
@@ -254,12 +254,14 @@ public class CheckoutController {
                         }
 
                         break;
-
-                }
+                    default:
+                        log.info("Case event not implemented");    
+               
+                    }
             } else {
                 log.error("Error while making the event object serialization");
             }
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(201).build();
         } catch (SignatureVerificationException e) {
             log.error("Error : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
