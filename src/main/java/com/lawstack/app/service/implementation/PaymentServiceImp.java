@@ -303,7 +303,14 @@ public class PaymentServiceImp implements PaymentService {
 
         log.info("geting the subscription by email");
 
-        return this.subService.getCustomerByEmail(email).getSubscriptionId();
+        try{
+            return  this.subService.getCustomerByEmail(email).getSubscriptionId();
+
+        }catch(Exception e){
+            log.error("Not Found");
+            return null;
+        }
+        
     }
 
     @Override

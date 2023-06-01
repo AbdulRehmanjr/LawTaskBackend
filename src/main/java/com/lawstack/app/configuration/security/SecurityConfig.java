@@ -90,7 +90,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                                                                 "/role/**", "/social/**", "/order/**",
                                                                                 "/token/**",
                                                                                 "/join/**", "/ws/**", "/freelancer/**",
-                                                                                "/app/**")
+                                                                                "/app/**","/v1/**","/api/v1/**")
                                                                 .permitAll()
                                                                 .anyRequest().authenticated())
                                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
