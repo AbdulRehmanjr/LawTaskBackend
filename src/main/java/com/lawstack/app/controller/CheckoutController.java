@@ -19,6 +19,7 @@ import com.lawstack.app.service.SellerService;
 import com.lawstack.app.service.SubscriptionService;
 import com.lawstack.app.service.UserDashBoardService;
 import com.lawstack.app.service.UserService;
+import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -32,6 +33,7 @@ import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -55,12 +57,8 @@ public class CheckoutController {
     @Autowired
     private PaymentService paymentService;
 
-
-
     private String customerId = "";
 
-
-     
     @Autowired
     private DashboardService dashService;
 
@@ -81,6 +79,14 @@ public class CheckoutController {
 
     @Autowired
     private UserDashBoardService uDashBoardService;
+
+    @Value("${stripe_secert_key}")
+    private String STRIPE_API;
+    
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = STRIPE_API;
+    }
 
     
     @Value("${stripe_webhook}")
