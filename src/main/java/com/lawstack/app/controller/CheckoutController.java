@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-
 @RestController
 @RequestMapping("/checkout")
 @Slf4j
@@ -82,20 +81,19 @@ public class CheckoutController {
 
     @Value("${stripe_secert_key}")
     private String STRIPEAPI;
-    
+
     @PostConstruct
     public void init() {
         Stripe.apiKey = STRIPEAPI;
     }
 
-    
     @Value("${stripe_webhook}")
     private String endpointSecret;
-    
+
     @PostMapping("/webhook")
     public ResponseEntity<?> handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
-            log.info("webhook");
+        log.info("webhook");
         try {
             Event event = Webhook.constructEvent(payload, signature, endpointSecret);
 
@@ -129,13 +127,12 @@ public class CheckoutController {
                                 Customer customer = Customer.retrieve(customerId);
                                 email = customer.getEmail();
 
-                               
-                                com.lawstack.app.model.Subscription  existingSubscription = this.subService.getCustomerByEmail(email);
+                                com.lawstack.app.model.Subscription existingSubscription = this.subService
+                                        .getCustomerByEmail(email);
                                 if (existingSubscription != null) {
-                                    
-                                   
+
                                     existingSubscription.setDateValid(LocalDate.now().plusDays(30));
-                                
+
                                     this.subService.updateSubscription(existingSubscription);
                                     log.info("Subscription data updated in the database.");
                                 }
@@ -196,7 +193,6 @@ public class CheckoutController {
                                 String buyerId = metadata.get("buyerId");
                                 Double price = Double.parseDouble(metadata.get("Price"));
 
-                      
                                 Dashboard dashboard = new Dashboard();
                                 dashboard.setIncome(payment.getAmount() / 100.0);
 
@@ -255,9 +251,9 @@ public class CheckoutController {
 
                         break;
                     default:
-                        log.info("Case event not implemented");    
-               
-                    }
+                        log.info("Case event not implemented");
+
+                }
             } else {
                 log.error("Error while making the event object serialization");
             }
@@ -270,7 +266,7 @@ public class CheckoutController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @PostMapping("/cancel/{email}")
     ResponseEntity<String> cancelSubscription(@PathVariable String email) {
 
@@ -286,6 +282,9 @@ public class CheckoutController {
             this.customerId = subscription.getCustomer();
             subscription.cancel();
             Seller seller = this.sellerService.getByEmail(email);
+            UserDashboard userDashboard = this.uDashBoardService.getUserDashboardByEmail(email);
+            userDashboard.setSellerType("NONE");
+            this.uDashBoardService.updateDashboard(userDashboard);
 
             seller.setSellerType("NONE");
 
@@ -330,5 +329,4 @@ public class CheckoutController {
 
     }
 
-   
 }
