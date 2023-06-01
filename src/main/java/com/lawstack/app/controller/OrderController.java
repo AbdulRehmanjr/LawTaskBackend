@@ -122,10 +122,16 @@ public class OrderController {
 
         List<Order> result = this.orderService.getAllOrdersByUserId(userId);
 
-        if (result == null) {
-            log.error("Orders not found");
+        try {
+            if (result == null || result.isEmpty()) {
+                log.error("Orders not found");
+                return ResponseEntity.status(404).body(null);
+            }    
+        } catch (Exception e) {
+            log.error("Error no order found");
             return ResponseEntity.status(404).body(null);
         }
+        
 
         return ResponseEntity.status(201).body(result);
 
