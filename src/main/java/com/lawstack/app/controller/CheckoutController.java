@@ -81,11 +81,11 @@ public class CheckoutController {
     private UserDashBoardService uDashBoardService;
 
     @Value("${stripe_secert_key}")
-    private String STRIPE_API;
+    private String STRIPEAPI;
     
     @PostConstruct
     public void init() {
-        Stripe.apiKey = STRIPE_API;
+        Stripe.apiKey = STRIPEAPI;
     }
 
     
