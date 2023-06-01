@@ -67,7 +67,7 @@ public class PaymentServiceImp implements PaymentService {
     @Override
     public String paymentCheckout(String type, String email) {
         Customer customer = checkAndCreateCustomer(email);
-        // Coupon coupon = createCoupon();
+      
 
         if (customer == null) {
             return null;
@@ -105,7 +105,7 @@ public class PaymentServiceImp implements PaymentService {
                 SessionCreateParams params = SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                         .setSuccessUrl(Domain + "/home/job-list")
-                        .setCancelUrl(Domain + "/home/job-list")
+                        .setCancelUrl(Domain + "/home/seller-dashboard")
                         .setCustomer(customer.getId())
                         .addDiscount(
                                 SessionCreateParams.Discount.builder()
@@ -126,11 +126,11 @@ public class PaymentServiceImp implements PaymentService {
                     log.info("ERROR: {}", e.getMessage());
                     return null;
                 }
-            }
-            SessionCreateParams params = SessionCreateParams.builder()
+            }else{
+                SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                     .setSuccessUrl(Domain + "/home/job-list")
-                    .setCancelUrl(Domain + "/home/job-list")
+                    .setCancelUrl(Domain + "/home/seller-dashboard")
                     .setCustomer(customer.getId())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
@@ -148,6 +148,8 @@ public class PaymentServiceImp implements PaymentService {
                 return null;
             }
         }
+            }
+            
         return null;
     }
 

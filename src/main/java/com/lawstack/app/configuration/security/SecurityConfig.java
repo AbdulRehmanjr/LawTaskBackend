@@ -38,17 +38,19 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Autowired
         private UserDetailServiceImp userDetailService;
 
-        private final  String[] origins = { "http://localhost:4200", "https://hooks.stripe.com","https://r.stripe.com",
+        private final String[] origins = { "http://localhost:4200",
                         "http://139.59.215.241",
                         "http://lawtasks.pro", "https://lawtasks.pro", "https://139.59.215.241",
+                        "https://hooks.stripe.com",
+                        "https://r.stripe.com",
+                        "https://w.stripe.com",
+                        "https://checkout.stripe.com",
                         "https://dashboard.stripe.com",
+                        "https://eventhooks.stripe.com",
                         "https://154.192.170.22",
-                        "https://api.stripes.com",
-                        "https://js.stripe.com",
-                        "https://eventhooks.stripe.com"
-                 };
 
-       
+        };
+
         @Bean
         AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
@@ -92,7 +94,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                                                                 "/role/**", "/social/**", "/order/**",
                                                                                 "/token/**",
                                                                                 "/join/**", "/ws/**", "/freelancer/**",
-                                                                                "/app/**","/v1/**","/api/v1/**")
+                                                                                "/app/**", "/v1/**", "/api/v1/**")
                                                                 .permitAll()
                                                                 .anyRequest().authenticated())
                                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
