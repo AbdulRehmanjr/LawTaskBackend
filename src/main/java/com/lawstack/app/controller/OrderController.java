@@ -124,10 +124,10 @@ public class OrderController {
 
         if (result == null) {
             log.error("Orders not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
+            return ResponseEntity.status(404).body(null);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        return ResponseEntity.status(201).body(result);
 
     }
 
