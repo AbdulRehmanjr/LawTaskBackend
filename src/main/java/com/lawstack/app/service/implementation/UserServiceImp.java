@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.lawstack.app.model.Dashboard;
+import com.lawstack.app.model.Notification;
 import com.lawstack.app.model.Role;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.RoleRepository;
@@ -16,6 +17,7 @@ import com.lawstack.app.repository.UserRespository;
 
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
+import com.lawstack.app.service.NotificationService;
 import com.lawstack.app.service.SellerAndUserJoinService;
 import com.lawstack.app.service.UserService;
 
@@ -47,6 +49,9 @@ public class UserServiceImp implements UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private NotificationService notService;
+
     @Override
     public User saveUser(User user) {
 
@@ -63,14 +68,28 @@ public class UserServiceImp implements UserService {
         user.setUserId(id);
         user.setRole(role);
         user.setPassword(encoder.encode(user.getPassword()));
+
         User saved = this.userRepo.save(user);
+
         String message = "Thanks! "+user.getEmail()+" for registration on our website.";
         this.emailService.sendMail(user.getEmail(),"Registration", message);
 
         this.userJoinService.saveUserJoin(id);
+
         Dashboard info = new Dashboard();
         info.setUsers(1);
+
         this.dashboardService.updateDashboard(info);
+
+        Notification notification = new Notification();
+        String content = """
+                %s Joined Our Platform.
+                """.formatted(user.getUserName());
+
+        notification.setContent(content);
+        notification.setUserId(id);
+        
+        this.notService.saveNotification(notification);
 
         return saved;
     }

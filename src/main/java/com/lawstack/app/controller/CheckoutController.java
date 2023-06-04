@@ -201,7 +201,7 @@ public class CheckoutController {
                                 String paymentMessage = """
                                         User: %s paid the amount of %s USD to lawtasks for your job
                                         """.formatted(email, payment.getAmount() / 100.0);
-                                this.emailService.sendMail(response.getEmail(), "Payment invoice", paymentMessage);
+                               
 
                                 String message = """
                                         Customer made an Order.Please check it.
@@ -226,10 +226,11 @@ public class CheckoutController {
                                     dash.setRevenue(dash.getRevenue() + price);
                                     this.uDashBoardService.updateDashboard(dash);
                                 }
-
+                                
                                 this.orderPaymentService.saveOrderPayment(pay);
 
                                 try {
+                                    this.emailService.sendMail(response.getEmail(), "Payment invoice", paymentMessage);
                                     this.emailService.sendMail(response.getEmail(), "Order Received", message);
                                 } catch (Exception e) {
                                     log.info("Error {} ", e.getMessage());
@@ -240,7 +241,7 @@ public class CheckoutController {
                         break;
                     case "customer.subscription.deleted":
 
-                        log.info("Subscrption deleted");
+                        log.info("Subscription Dleted");
                         try {
                             Customer response = Customer.retrieve(this.customerId);
 

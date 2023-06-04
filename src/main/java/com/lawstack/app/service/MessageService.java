@@ -15,4 +15,9 @@ public interface MessageService {
 
     List<Chat> getAllMessageByChat(String userId,String receiverId);
 
+    Boolean readOneMessage(Chat message);
+
+    Boolean readAllMessages(String from,String to);
+
+
 }

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Freelancer;
+import com.lawstack.app.model.Notification;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.SellerRequest;
 import com.lawstack.app.model.User;
@@ -20,6 +21,7 @@ import com.lawstack.app.repository.SellerRequestRespository;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.EmailService;
 import com.lawstack.app.service.FreelancerService;
+import com.lawstack.app.service.NotificationService;
 import com.lawstack.app.service.SellerAndUserJoinService;
 import com.lawstack.app.service.SellerRequestService;
 import com.lawstack.app.service.SellerService;
@@ -52,6 +54,9 @@ public class SellerRequestServiceImp implements SellerRequestService {
 
     @Autowired
     private SellerAndUserJoinService sellerJoinService;
+
+    @Autowired
+    private NotificationService notService;
 
     /**
      * @implSpec This will do necessary checks and forward request for processing
@@ -93,7 +98,17 @@ public class SellerRequestServiceImp implements SellerRequestService {
             seller.setUser(user);
 
             seller = this.sellerRepo.save(seller);
-
+            
+            Notification notification = new Notification();
+            String content = """
+                    %s Joined Our Platform.
+                    """.formatted(user.getUserName());
+    
+            notification.setContent(content);
+            notification.setUserId(user.getUserId());
+            
+            this.notService.saveNotification(notification);
+            
             this.emailService.sendMail(user.getEmail(), "To Become a Seller",
                     "Your Request to become Seller has been forwrded to admin please wait for their response.");
 
@@ -205,8 +220,19 @@ public class SellerRequestServiceImp implements SellerRequestService {
 
             this.sellerJoinService.saveSellerJoin(seller.getUser().getUserId());
 
+            
+            Notification notification = new Notification();
+            String content = """
+                    %s Your Request has been approved by the Administration.
+                    """.formatted(user.getUserName());
+    
+            notification.setContent(content);
+            notification.setUserId(seller.getUser().getUserId());
+            
+            this.notService.saveNotification(notification);
+
             this.emailService.sendMail(Seller.getEmail(), "Seller Request Approval",
-                    "Your Request has been approved by the user");
+                    "Your Request has been approved by the Administration.");
         }
 
         return seller;
@@ -236,9 +262,19 @@ public class SellerRequestServiceImp implements SellerRequestService {
             User user = this.userService.getUserById(seller.getUser().getUserId());
 
             this.sellerRepo.save(seller);
+            
+            Notification notification = new Notification();
+            String content = """
+                    %s Your Request has been rejected by the Administration.
+                    """.formatted(user.getUserName());
+    
+            notification.setContent(content);
+            notification.setUserId(user.getUserId());
+            
+            this.notService.saveNotification(notification);
 
             this.emailService.sendMail(user.getEmail(), "Seller Request Approval",
-                    "Your Request has been approved by the user");
+                    "Your Request has been rejected by the Administration.");
         }
 
         return seller;

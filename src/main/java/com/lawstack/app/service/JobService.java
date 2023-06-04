@@ -10,6 +10,7 @@ public interface JobService {
 
     Job getByJobId(String jobId);
 
+
     List<Job> getJobsByUserId(String userId);
 
     List<Job> getJobsByJobName(String jobName);

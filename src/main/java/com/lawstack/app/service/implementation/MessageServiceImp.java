@@ -1,6 +1,7 @@
 package com.lawstack.app.service.implementation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,37 @@ public class MessageServiceImp  implements MessageService{
         
         List<Chat> chats = this.messageRepo.findAllBySenderNameAndReceiverNameOrReceiverNameAndSenderName(userId, receiverId,userId,receiverId);
         return chats;
+    }
+
+    @Override
+    public Boolean readOneMessage(Chat message) {
+        
+
+        Chat response  = this.messageRepo.findById(message.getId()).get();
+
+        if(response == null){
+            return false;
+        }
+        response.setRead(true);
+        this.messageRepo.save(response);
+        return true;
+    }
+
+    @Override
+    public Boolean readAllMessages(String from, String to) {
+        List<Chat> chats = this.messageRepo.findAllBySenderNameAndReceiverName(from,to);
+
+        if(chats == null){
+            return false;
+        }
+
+         chats = chats.stream()
+        .peek(chat -> chat.setRead(true))
+        .collect(Collectors.toList());
+
+        this.messageRepo.saveAll(chats);
+        
+        return true;
     }
 
    

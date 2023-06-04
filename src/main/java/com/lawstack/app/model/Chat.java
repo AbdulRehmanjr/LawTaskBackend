@@ -31,6 +31,5 @@ public class Chat {
     private String content;
     private String Date;
     private String type;
-
     private boolean isRead = false;
 }

@@ -38,6 +38,9 @@ public class Job {
     @JsonIgnore
     private List<Order> orders;
 
+    @ManyToOne
+    private Category category;
+
     public String getJobId() {
         return jobId;
     }

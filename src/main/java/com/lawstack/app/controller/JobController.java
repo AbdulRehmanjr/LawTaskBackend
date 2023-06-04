@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,7 @@ public class JobController {
     @PostMapping("/save")
     ResponseEntity<?> createJob(@RequestParam("image") MultipartFile jobImage, String job){
 
-        log.info("Making new Job creation request");
+        
         
         Job model = new Job();
 
@@ -56,6 +57,7 @@ public class JobController {
 
         model = this.jobService.createJob(model);
         if (model != null) {
+            log.error("Error : Job creation error.");
             return ResponseEntity.status(HttpStatus.CREATED).body(model);
         }
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
@@ -65,12 +67,12 @@ public class JobController {
     @GetMapping("/{userId}")
     ResponseEntity<?> getAllJobsByUserId(@PathVariable String userId){
 
-        log.info("Geting all Jobs by userId");
+        
         List<Job>  jobs = this.jobService.getJobsByUserId(userId);
 
         try {
             if(jobs.isEmpty()==true){
-                log.info("jobs is empty "); 
+                log.error("jobs are empty "); 
                 return ResponseEntity.status(404).body(null);
             }    
         } catch (Exception e) {
@@ -83,7 +85,7 @@ public class JobController {
     @GetMapping("/search")
     ResponseEntity<?> getAllJobsByJobName(@RequestParam String jobName){
 
-        log.info("Geting all jobs by job Name {}",jobName);
+        
 
         List<Job> jobs = this.jobService.getJobsByJobName(jobName);
 
@@ -92,6 +94,19 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(jobs);
+    }
+
+    @PostMapping("/edit")
+    ResponseEntity<?> udpdateJob(@RequestBody Job job){
+
+        Job response = this.jobService.updateJob(job);
+
+        
+        if(response == null){
+            log.error("Error: Updating Job");
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.status(201).body(response);
     }
 
 }

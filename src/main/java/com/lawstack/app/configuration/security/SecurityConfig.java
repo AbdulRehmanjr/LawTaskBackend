@@ -83,6 +83,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 .authorizeHttpRequests(
                                                 (req) -> req
                                                                 .requestMatchers("/user/**",
+                                                                "/category/**",
                                                                                 "/sellerrequest/**", "/order/**",
                                                                                 "/subscription/**", "/file/**",
                                                                                 "/userChat/**", "/checkout/**",
@@ -93,6 +94,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                                                                 "/userdashboard/**",
                                                                                 "/role/**", "/social/**", "/order/**",
                                                                                 "/token/**",
+                                                                                "/notification/**",
                                                                                 "/join/**", "/ws/**", "/freelancer/**",
                                                                                 "/app/**")
                                                                 .permitAll()

@@ -46,7 +46,7 @@ public class MessageController {
             message.setType("RECEIVER");
             log.info("message",message);
             smt.convertAndSendToUser(message.getSenderName(), "/private", message);    
-
+            
         } catch (Exception e) {
             log.error("Error cause: {}, Message: {}", e.getCause(), e.getMessage());
         }

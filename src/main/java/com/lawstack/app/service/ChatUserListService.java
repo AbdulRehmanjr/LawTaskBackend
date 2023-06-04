@@ -3,7 +3,7 @@ package com.lawstack.app.service;
 import java.util.List;
 
 import com.lawstack.app.model.ChatUserList;
-import com.lawstack.app.model.User;
+import com.lawstack.app.model.UserChat;
 
 public interface ChatUserListService {
 
@@ -13,6 +13,7 @@ public interface ChatUserListService {
 
     void removeUserFromChatList(String receiverId);
 
-    List<User> getChatListById(String userId);
+    List<UserChat> getChatListById(String userId);
 
+    int getCountMessages(String userId);
 }

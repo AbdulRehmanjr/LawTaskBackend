@@ -9,5 +9,12 @@ import com.lawstack.app.model.Chat;
 
 public interface MessageRepository extends JpaRepository<Chat,Long>{
     
-    List<Chat> findAllBySenderNameAndReceiverNameOrReceiverNameAndSenderName(String userId, String receiverId, String receiverId2, String userId2);
+    List<Chat> findAllBySenderNameAndReceiverNameOrReceiverNameAndSenderName
+    (String userId, String receiverId, String receiverId2, String userId2);
+
+    List<Chat> findAllBySenderNameAndReceiverName(String userId, String receiverId);
+
+    List<Chat> findByReceiverNameAndSenderNameAndIsRead(String receiverName, String senderName, boolean isRead);
+
+
 }

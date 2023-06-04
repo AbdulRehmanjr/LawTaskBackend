@@ -97,11 +97,12 @@ public class JobServiceImp implements JobService {
 
   @Override
   public List<Job> getJobsByUserId(String userId) {
-    log.info("Getting all jobs by User id: {}", userId);
+    
 
     List<Job> jobs = this.jobRepo.findAllByUserUserId(userId);
 
     if (jobs == null) {
+      log.error("Getting all jobs by User id: {}", userId);
       return null;
     }
     return jobs;
@@ -109,7 +110,20 @@ public class JobServiceImp implements JobService {
 
   @Override
   public Job updateJob(Job job) {
-    return null;
+
+    Job response = this.jobRepo.findById(job.getJobId()).get();
+
+    if(response == null){
+      log.error("Cant fetch job with id : {}",job.getJobId());
+      return null;
+    }
+
+    response.setJobName(job.getJobName());
+    response.setJobPrice(job.getJobPrice());
+    response.setJobType(job.getJobType());
+    response.setDescription(job.getDescription());
+    return this.jobRepo.save(response);
+
   }
 
   @Override
