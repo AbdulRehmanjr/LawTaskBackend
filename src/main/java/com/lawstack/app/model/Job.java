@@ -38,7 +38,7 @@ public class Job {
     @JsonIgnore
     private List<Order> orders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 
     public String getJobId() {
@@ -95,5 +95,21 @@ public class Job {
 
     public void setJobType(String jobType) {
         this.jobType = jobType;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

@@ -1,5 +1,7 @@
 package com.lawstack.app.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -16,9 +18,11 @@ public class Freelancer {
     @OneToOne(fetch = FetchType.EAGER)
     private SellerRequest seller;
 
-    private double rating = 0;
+    private int rating = 0;
 
-    private double success = 0;
+    private int success = 100;
+
+    private List<String> comments;
 
     public String getId() {
         return id;
@@ -30,19 +34,19 @@ public class Freelancer {
 
   
 
-    public double getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
-    public double getSuccess() {
+    public int getSuccess() {
         return success;
     }
 
-    public void setSuccess(double success) {
+    public void setSuccess(int success) {
         this.success = success;
     }
 
@@ -52,6 +56,14 @@ public class Freelancer {
 
     public void setSeller(SellerRequest seller) {
         this.seller = seller;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
     }
 
 }

@@ -95,6 +95,17 @@ public class JobController {
         }
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(jobs);
     }
+    @GetMapping("/search/{categoryName}")
+    ResponseEntity<?> getAllJobsByCategoryName(@PathVariable String categoryName){
+
+        List<Job> jobs = this.jobService.getJobsByCategoryName(categoryName);
+        
+        if(jobs == null){
+            log.error("Error : Jobs not found");
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.status(201).body(jobs);
+    }
 
     @PostMapping("/edit")
     ResponseEntity<?> udpdateJob(@RequestBody Job job){
@@ -108,5 +119,6 @@ public class JobController {
         }
         return ResponseEntity.status(201).body(response);
     }
+
 
 }

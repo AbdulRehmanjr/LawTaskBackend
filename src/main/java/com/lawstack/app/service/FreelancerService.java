@@ -10,10 +10,12 @@ public interface FreelancerService {
 
     Freelancer getOneFreelancer(String id);
 
+    Freelancer getFreelancerByUserId(String id);
+
     List<Freelancer> getTopRatedFreelancers();
 
     List<Freelancer> getAllFreelancers();
 
-    Freelancer updateRating(String id,double rating);
+    Freelancer updateRating(String id,int rating,String comment,String orderId);
 
 }

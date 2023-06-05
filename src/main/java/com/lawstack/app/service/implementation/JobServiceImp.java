@@ -129,9 +129,24 @@ public class JobServiceImp implements JobService {
   @Override
   public List<Job> getJobsByJobName(String jobName) {
 
-    log.info("Fetching all Jobs By Job Name");
-
     List<Job> jobs = this.jobRepo.findAllByJobNameContains(jobName);
+
+    try {
+      if (jobs.isEmpty()) {
+        log.error("Jobs not found");
+        return null;
+      }
+    } catch (Exception e) {
+      log.error("Error : {}", e.getMessage());
+      return null;
+    }
+    return jobs;
+  }
+
+  @Override
+  public List<Job> getJobsByCategoryName(String categoryName) {
+    
+    List<Job> jobs = this.jobRepo.findAllByCategoryNameIgnoreCaseContains(categoryName);
 
     try {
       if (jobs.isEmpty()) {

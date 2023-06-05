@@ -22,7 +22,6 @@ public class Seller {
 
     private int currentJobs = 0;
 
-    
     private int maxJobs = 0;
 
     
