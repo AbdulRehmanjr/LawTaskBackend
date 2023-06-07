@@ -16,6 +16,8 @@ public interface SellerRequestService {
     
     List<SellerRequest> fetchApprovedSellerRequests();
 
+    int getPendingRequests();
+
     SellerRequest fetchRequestByUserId(String userId);
     
     List<SellerRequest> getAllRequest();

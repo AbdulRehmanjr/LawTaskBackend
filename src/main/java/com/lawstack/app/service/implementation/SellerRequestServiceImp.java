@@ -66,7 +66,7 @@ public class SellerRequestServiceImp implements SellerRequestService {
     @Override
     public SellerRequest requestForSeller(String sellerInfo, MultipartFile document) {
 
-        log.info("Saving Seller Request Data in database");
+        
 
         String id = UUID.randomUUID().toString();
         SellerRequest seller = new SellerRequest();
@@ -101,7 +101,7 @@ public class SellerRequestServiceImp implements SellerRequestService {
             
             Notification notification = new Notification();
             String content = """
-                    %s Joined Our Platform.
+                    %s Sent Request to become seller.
                     """.formatted(user.getUserName());
     
             notification.setContent(content);
@@ -318,6 +318,13 @@ public class SellerRequestServiceImp implements SellerRequestService {
             return null;
         }
         return seller;
+    }
+
+    @Override
+    public int getPendingRequests() {
+        int response = this.sellerRepo.findAllByisActiveFalse().size();
+
+        return response;
     }
 
 }

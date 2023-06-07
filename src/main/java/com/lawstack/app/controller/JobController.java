@@ -107,6 +107,17 @@ public class JobController {
         return ResponseEntity.status(201).body(jobs);
     }
 
+    @GetMapping("/category/{categoryId}")
+    ResponseEntity<?> getAllJobsByCategoryId(@PathVariable int categoryId){
+
+        List<Job> jobs = this.jobService.getJobsByCategoryId(categoryId);
+        
+        if(jobs == null){
+            log.error("Error : Jobs not found");
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.status(201).body(jobs);
+    }
     @PostMapping("/edit")
     ResponseEntity<?> udpdateJob(@RequestBody Job job){
 

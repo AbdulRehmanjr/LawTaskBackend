@@ -17,5 +17,7 @@ public interface JobService {
 
     List<Job> getJobsByCategoryName(String categoryName);
 
+    List<Job> getJobsByCategoryId(int id);
+
     Job updateJob(Job job);
 }

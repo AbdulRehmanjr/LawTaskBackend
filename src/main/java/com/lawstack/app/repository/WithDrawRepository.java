@@ -8,5 +8,7 @@ import com.lawstack.app.model.WithDraw;
 
 public interface WithDrawRepository extends JpaRepository<WithDraw,String>{
     
-    List<WithDraw> findAllByUserId(String userId);
+    List<WithDraw> findAllByUserUserId(String userId);
+
+    List<WithDraw> findAllByStatus(boolean status);
 }

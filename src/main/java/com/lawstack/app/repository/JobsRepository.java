@@ -13,4 +13,6 @@ public interface JobsRepository extends JpaRepository<Job,String>{
     List<Job> findAllByJobNameContains(String jobName);
     
     List<Job> findAllByCategoryNameIgnoreCaseContains(String categoryName);
+
+    List<Job> findAllByCategoryId(int id);
 }

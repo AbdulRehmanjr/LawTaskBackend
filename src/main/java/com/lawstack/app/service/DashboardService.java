@@ -9,4 +9,6 @@ public interface DashboardService {
     Dashboard getDashboard(int id);
 
     Dashboard updateDashboard(Dashboard dashboard);
+
+    Dashboard updateAmount(Dashboard dashboard);
 }

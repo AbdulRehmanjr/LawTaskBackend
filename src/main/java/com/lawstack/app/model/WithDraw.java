@@ -2,6 +2,7 @@ package com.lawstack.app.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,7 +18,8 @@ public class WithDraw {
     
     private Boolean status=false;
 
-    private String userId;
+    @ManyToOne
+    private User user;
 
     public String getId() {
         return id;
@@ -51,11 +53,11 @@ public class WithDraw {
         this.status = status;
     }
 
-    public String getUser() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser(String user) {
-        this.userId = user;
+    public void setUser(User user) {
+        this.user = user;
     }
 }   

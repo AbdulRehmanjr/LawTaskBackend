@@ -105,6 +105,15 @@ public class SellerRequestController {
         }
         return ResponseEntity.status(201).body(sellers);
     }
+    @GetMapping("/count")
+    ResponseEntity<?> getCount() {
+
+        log.info("Geting the count of pending requests");
+
+        int response = this.sellerService.getPendingRequests();
+
+        return ResponseEntity.status(201).body(response);
+    }
     @PostMapping("/accept/{sellerId}")
     ResponseEntity<?> acceptRequest(@PathVariable String sellerId) {
 

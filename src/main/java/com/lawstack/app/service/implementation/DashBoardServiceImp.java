@@ -37,15 +37,15 @@ public class DashBoardServiceImp implements DashboardService {
             return null;
 
         if (dashboard.getDewDropper() != 0) {
-            log.info("Got me dew Subscription");
+    
             info.setDewDropper(info.getDewDropper()+1);
         }
         if (dashboard.getSprinkle() != 0) {
-            log.info("Got me Sprinkle Subscription");
+         
             info.setSprinkle(info.getSprinkle() + 1);
         }
         if (dashboard.getRainmaker() != 0) {
-            log.info("Got me Rain Subscription");
+           
             info.setRainmaker(info.getRainmaker() + 1);
         }
         if (dashboard.getUsers() != 0) {
@@ -63,6 +63,18 @@ public class DashBoardServiceImp implements DashboardService {
         }
 
         return this.saveDashboard(info);
+    }
+
+    @Override
+    public Dashboard updateAmount(Dashboard dashboard) {
+
+        Dashboard response = this.saveDashboard(dashboard);
+
+        if(response == null){
+            return null;
+        }
+        return dashboard;
+
     }
 
 }

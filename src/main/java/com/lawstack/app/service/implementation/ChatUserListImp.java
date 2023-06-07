@@ -166,7 +166,7 @@ public class ChatUserListImp implements ChatUserListService {
 
     @Override
     public int getCountMessages(String userId) {
-        log.info("Getting Messages Count.");
+        
         
         ChatUserList userList = this.culRepo.findByUserId(userId);
         User receiver = this.userService.getUserById(userId);
@@ -181,8 +181,7 @@ public class ChatUserListImp implements ChatUserListService {
             userList.getUsersTo().stream().forEach(id -> {
               
                 int  response =  this.messageRepository.findByReceiverNameAndSenderNameAndIsRead(userId, id, false).size();
-                  count.addAndGet(response);
-                  log.info("Count {}",count.get());
+                  count.addAndGet(response);        
               });  
         } catch (Exception e) {
             log.error("Error {}",e.getMessage());

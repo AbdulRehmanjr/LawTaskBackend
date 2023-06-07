@@ -160,4 +160,21 @@ public class JobServiceImp implements JobService {
     return jobs;
   }
 
+  @Override
+  public List<Job> getJobsByCategoryId(int id) {
+
+    List<Job> jobs = this.jobRepo.findAllByCategoryId(id);
+
+    try {
+      if (jobs.isEmpty()) {
+        log.error("Jobs not found");
+        return null;
+      }
+    } catch (Exception e) {
+      log.error("Error : {}", e.getMessage());
+      return null;
+    }
+    return jobs;
+  }
+
 }
