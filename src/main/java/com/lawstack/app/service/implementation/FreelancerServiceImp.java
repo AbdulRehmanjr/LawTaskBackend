@@ -54,7 +54,7 @@ public class FreelancerServiceImp implements FreelancerService {
 
     @Override
     public List<Freelancer> getTopRatedFreelancers() {
-        log.info("Fetching all freelacners");
+        
 
         List<Freelancer> freelancers = this.flRepo.findAll();
 

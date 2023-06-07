@@ -177,4 +177,11 @@ public class JobServiceImp implements JobService {
     return jobs;
   }
 
+  @Override
+  public List<Job> getAll() {
+
+    return this.jobRepo.findAll();
+    
+  }
+
 }

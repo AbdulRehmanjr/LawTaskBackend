@@ -118,6 +118,19 @@ public class JobController {
         }
         return ResponseEntity.status(201).body(jobs);
     }
+
+    @GetMapping("/all")
+    ResponseEntity<?> getAll(){
+
+        List<Job> jobs = this.jobService.getAll();
+        
+        if(jobs == null){
+            log.error("Error : Jobs not found");
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.status(201).body(jobs);
+    }
+
     @PostMapping("/edit")
     ResponseEntity<?> udpdateJob(@RequestBody Job job){
 
