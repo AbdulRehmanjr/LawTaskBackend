@@ -6,11 +6,13 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lawstack.app.model.Category;
 import com.lawstack.app.model.Dashboard;
 import com.lawstack.app.model.Job;
 import com.lawstack.app.model.Seller;
 import com.lawstack.app.model.User;
 import com.lawstack.app.model.UserDashboard;
+import com.lawstack.app.repository.CategoryRepository;
 import com.lawstack.app.repository.JobsRepository;
 import com.lawstack.app.service.DashboardService;
 import com.lawstack.app.service.JobService;
@@ -39,10 +41,13 @@ public class JobServiceImp implements JobService {
   @Autowired
   private UserDashBoardService udService;
 
+  @Autowired
+  private CategoryRepository catRepo;
+
   @Override
   public Job createJob(Job job) {
 
-    log.info("Insert new Job  in database");
+    
 
     String userId = job.getUser().getUserId();
     User user = this.userService.getUserById(userId);
@@ -53,16 +58,21 @@ public class JobServiceImp implements JobService {
     }
     // * check seller has permission to add job or job slot free */
     Seller seller = this.sellerService.getSellerByUserId(userId);
-
-    if (seller.getCurrentJobs() == seller.getMaxJobs()) {
+    Category category = this.catRepo.findById(job.getCategory().getId()).get();
+    if (seller.getCurrentJobs() == seller.getMaxJobs() || category  == null) {
       return null;
     }
 
-    // setting unique id
+
+
+    //* setting unique id
     String id = UUID.randomUUID().toString();
     job.setJobId(id);
+    job.setCategory(category);
 
     seller.setCurrentJobs(seller.getCurrentJobs() + 1);
+    
+
 
     Job response = this.jobRepo.save(job);
 
@@ -76,7 +86,7 @@ public class JobServiceImp implements JobService {
       this.udService.updateDashboard(udash);
       dashboard.setJobs(1);
       this.dashService.updateDashboard(dashboard);
-      return job;
+      return response;
     }
     return null;
 
