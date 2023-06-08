@@ -137,9 +137,14 @@ public class OrderServiceImp implements OrderService{
 
     @Override
     public List<Order> getAllOrdersByCustomerId(String id) {
-        log.info("Getting all Orders by customer id: {}",id);
+        
+        List<Order> orders = this.orderRepository.findByCustomerId(id);
 
-        return this.orderRepository.findByCustomerId(id);
+        if(orders==null || orders.isEmpty()){
+            log.error("No job Found");
+            return null;
+        }
+        return orders;
 
     }
 

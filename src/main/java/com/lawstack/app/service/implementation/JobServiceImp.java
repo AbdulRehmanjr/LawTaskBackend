@@ -63,17 +63,16 @@ public class JobServiceImp implements JobService {
       return null;
     }
 
-
-
     //* setting unique id
     String id = UUID.randomUUID().toString();
     job.setJobId(id);
     job.setCategory(category);
 
+    category.setJobCount(category.getJobCount()+1);
+
+    this.catRepo.save(category);
     seller.setCurrentJobs(seller.getCurrentJobs() + 1);
     
-
-
     Job response = this.jobRepo.save(job);
 
     if (response != null) {

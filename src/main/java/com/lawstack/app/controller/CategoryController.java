@@ -37,4 +37,6 @@ public class CategoryController {
 
         return ResponseEntity.status(201).body(categories);
     }
+
+    
 }

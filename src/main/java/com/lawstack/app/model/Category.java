@@ -21,6 +21,12 @@ public class Category {
 
     private String name;
 
+    private String description;
+
+    private int jobCount = 0;
+
+    private String icons;
+
     @OneToMany
     @JsonIgnore
     private List<Job> jobs;
@@ -39,5 +45,37 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getJobCount() {
+        return jobCount;
+    }
+
+    public void setJobCount(int jobCount) {
+        this.jobCount = jobCount;
+    }
+
+    public String getIcons() {
+        return icons;
+    }
+
+    public void setIcons(String icons) {
+        this.icons = icons;
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
