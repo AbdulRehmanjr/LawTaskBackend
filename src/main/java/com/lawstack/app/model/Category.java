@@ -27,7 +27,7 @@ public class Category {
 
     private String icons;
 
-    @OneToMany
+    @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Job> jobs;
 
