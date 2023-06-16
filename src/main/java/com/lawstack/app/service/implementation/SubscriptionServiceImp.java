@@ -44,6 +44,7 @@ public class SubscriptionServiceImp implements SubscriptionService{
             }
         } else {
             // Create a new subscription entry
+            log.info("Saving new Subscripton");
             Subscription newSubscription = new Subscription();
             newSubscription.setSubId(UUID.randomUUID().toString());
             newSubscription.setEmail(email);

@@ -105,7 +105,7 @@ public class PaymentServiceImp implements PaymentService {
                 SessionCreateParams params = SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                         .setSuccessUrl(Domain + "/home/job-list")
-                        .setCancelUrl(Domain + "/home/seller-dashboard")
+                        .setCancelUrl(Domain + "/seller-dashboard")
                         .setCustomer(customer.getId())
                         .addDiscount(
                                 SessionCreateParams.Discount.builder()
@@ -130,7 +130,7 @@ public class PaymentServiceImp implements PaymentService {
                 SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                     .setSuccessUrl(Domain + "/home/job-list")
-                    .setCancelUrl(Domain + "/home/seller-dashboard")
+                    .setCancelUrl(Domain + "/seller-dashboard")
                     .setCustomer(customer.getId())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()

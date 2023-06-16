@@ -146,6 +146,7 @@ public class CheckoutController {
                         break;
                     case "checkout.session.completed":
                         Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+                        
                         log.info("Session: {}", session);
                         if (session != null) {
                             if ("subscription".equals(session.getMode())) {
@@ -167,6 +168,7 @@ public class CheckoutController {
                                     email = customer.getEmail();
 
                                     // Update the seller info after subscription
+                                    log.info("Product : {}",product.getName());
                                     CardSubscription card = new CardSubscription();
                                     card.setSubscription(product.getName());
 
@@ -180,6 +182,7 @@ public class CheckoutController {
                                     log.error("ERROR: {}", e.getMessage());
                                 }
                             } else {
+                                log.info("Payment of Order is being processed");
                                 PaymentIntent payment = PaymentIntent.retrieve(session.getPaymentIntent());
                                 Map<String, String> metadata = session.getMetadata();
                                 String customerId = payment.getCustomer();
@@ -241,7 +244,7 @@ public class CheckoutController {
                         break;
                     case "customer.subscription.deleted":
 
-                        log.info("Subscription Dleted");
+                        log.info("Subscription Deleted");
                         try {
                             Customer response = Customer.retrieve(this.customerId);
 

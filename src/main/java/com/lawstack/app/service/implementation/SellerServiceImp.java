@@ -115,6 +115,7 @@ public class SellerServiceImp implements SellerService {
         UserDashboard response = this.udashService.getUserDashboardByEmail(email);
         UserDashboard udash = new UserDashboard();
         if(response!=null){
+            log.info("Setting user dashboad info");
             udash.setEmail(response.getEmail());
             udash.setSellerType(response.getSellerType());
             udash.setId(response.getId());
@@ -128,21 +129,18 @@ public class SellerServiceImp implements SellerService {
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
             dash.setDewDropper(1);
             dash.setIncome(amount / 100.0);
-        
             udash.setSellerType("DEWDROPPER");
         } else if (card.getSubscription().equals("Sprinkle Starter")) {
             log.info("got sprinkle");
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
             dash.setSprinkle(1);
             dash.setIncome(amount / 100.0);
-        
             udash.setSellerType("SPRINKLE");
         } else if (card.getSubscription().equals("Rainmaker")) {
             log.info("got rain");
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
             dash.setRainmaker(1);
-            dash.setIncome(amount / 100.0);
-        
+            dash.setIncome(amount / 100.0);   
             udash.setSellerType("RAINMAKER");
         }   
         udash.setEmail(email);
