@@ -126,20 +126,20 @@ public class SellerServiceImp implements SellerService {
         
         String type = card.getSubscription();
         log.info("Subscription type  : {}",type);
-        if (type.equals("Dew Dropper") == true) {
-            log.info("got dew");
+        if (type.contains("Dew Dropper") == true) {
+            
             seller.setMaxJobs(JobNumber.valueOf("DEWDROPPER").getValue());
             dash.setDewDropper(1);
             dash.setIncome(amount / 100.0);
             udash.setSellerType("DEWDROPPER");
         } else if (type.equals("Sprinkle Starter") == true) {
-            log.info("got sprinkle");
+            
             seller.setMaxJobs(JobNumber.valueOf("SPRINKLE").getValue());
             dash.setSprinkle(1);
             dash.setIncome(amount / 100.0);
             udash.setSellerType("SPRINKLE");
         } else if (type.equals("Rainmaker") == true) {
-            log.info("got rain");
+            
             seller.setMaxJobs(JobNumber.valueOf("RAINMAKER").getValue());
             dash.setRainmaker(1);
             dash.setIncome(amount / 100.0);   
