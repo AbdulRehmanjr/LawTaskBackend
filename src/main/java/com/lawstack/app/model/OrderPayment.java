@@ -17,13 +17,15 @@ public class OrderPayment {
 
     private String email;
     
-    private String name;
+    private String name ="";
 
     private String jobId;
 
     private String sellerId;
 
     private Double price = 0.0;
+
+    private String OrderId = "";
 
     public String getId() {
         return id;
@@ -87,6 +89,14 @@ public class OrderPayment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOrderId() {
+        return OrderId;
+    }
+
+    public void setOrderId(String orderId) {
+        OrderId = orderId;
     }
 
 }

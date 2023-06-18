@@ -1,5 +1,6 @@
 package com.lawstack.app.service.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.lawstack.app.model.Job;
 import com.lawstack.app.model.Order;
+import com.lawstack.app.model.OrderPayment;
 import com.lawstack.app.model.User;
 import com.lawstack.app.repository.OrderRepository;
 import com.lawstack.app.service.JobService;
+import com.lawstack.app.service.OrderPaymentService;
 import com.lawstack.app.service.OrderService;
 import com.lawstack.app.service.UserService;
 
@@ -22,6 +25,9 @@ public class OrderServiceImp implements OrderService{
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderPaymentService orderPay;
 
     @Autowired
     private UserService userService;
@@ -93,7 +99,22 @@ public class OrderServiceImp implements OrderService{
         
         log.info("geting all order by userId");
 
-        return this.orderRepository.findAllByUserUserId(userId);
+        List<OrderPayment> payed = this.orderPay.getAllByUserId(userId);
+        
+        List<Order> orders = new ArrayList<>();
+
+        if(payed!=null){
+            payed.stream().forEach(
+                payment ->{
+                    Order order = this.orderRepository.findById(payment.getOrderId()).orElse(null);
+                    if(order !=null){
+                        orders.add(order);
+                    }
+                    
+                }
+            );
+        }
+        return orders;
     }   
 
     @Override
@@ -132,17 +153,43 @@ public class OrderServiceImp implements OrderService{
     public List<Order> getAllOrdersByCustomerEmail(String email) {
        log.info("Getting all Orders By Email");
 
-       return this.orderRepository.findAllByCustomerEmail(email);
+               List<OrderPayment> payed = this.orderPay.getAllByCustomerEmail(email);
+        
+        List<Order> orders = new ArrayList<>();
+
+        if(payed!=null){
+            payed.stream().forEach(
+                payment ->{
+                    Order order = this.orderRepository.findById(payment.getOrderId()).orElse(null);
+                    if(order !=null){
+                        orders.add(order);
+                    }
+                    
+                }
+            );
+        }
+        return orders;
+
     }
 
     @Override
     public List<Order> getAllOrdersByCustomerId(String id) {
         
-        List<Order> orders = this.orderRepository.findByCustomerId(id);
+        
+         List<OrderPayment> payed = this.orderPay.getAllByCustomerId(id);
+        
+        List<Order> orders = new ArrayList<>();
 
-        if(orders==null || orders.isEmpty()){
-            log.error("No job Found");
-            return null;
+        if(payed!=null){
+            payed.stream().forEach(
+                payment ->{
+                    Order order = this.orderRepository.findById(payment.getOrderId()).orElse(null);
+                    if(order !=null){
+                        orders.add(order);
+                    }
+                    
+                }
+            );
         }
         return orders;
 

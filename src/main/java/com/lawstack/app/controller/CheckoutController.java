@@ -194,7 +194,8 @@ public class CheckoutController {
                                 String user = metadata.get("user");
                                 String jobId = metadata.get("jobId");
                                 String buyerId = metadata.get("buyerId");
-                                Double price = Double.parseDouble(metadata.get("Price"));
+                                Double price = Double.parseDouble(metadata.get("price"));
+                                String orderId  = metadata.get("orderId");
 
                                 Dashboard dashboard = new Dashboard();
                                 dashboard.setIncome(payment.getAmount() / 100.0);
@@ -221,6 +222,7 @@ public class CheckoutController {
                                 pay.setJobId(jobId);
                                 pay.setSellerId(user);
                                 pay.setPrice(price);
+                                pay.setOrderId(orderId);
 
                                 UserDashboard dash = this.uDashBoardService
                                         .getInfoByUserId(user);

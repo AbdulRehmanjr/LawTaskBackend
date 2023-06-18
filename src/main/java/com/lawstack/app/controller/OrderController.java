@@ -24,9 +24,10 @@ import com.lawstack.app.service.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/order")
-@Slf4j
 public class OrderController {
 
     @Autowired
@@ -74,19 +75,21 @@ public class OrderController {
         if (n_order != null) {
             return ResponseEntity.status(201).body(n_order);
         }
-        return ResponseEntity.status(404).body("Error in creation order");
+        return ResponseEntity.status(404).body("Url expired or order is being confirmed.");
 
     }
 
     @PostMapping("/done")
     ResponseEntity<?> jobDone(@RequestBody Order order) {
-        log.info("Job completed updating its status");
+        
 
         Order response = this.orderService.orderDone(order);
 
         if (response != null) {
+        
             return ResponseEntity.status(201).body(order);
         }
+        log.info("Error in Setting the job status to be done");
         return ResponseEntity.status(404).body(null);
     }
 

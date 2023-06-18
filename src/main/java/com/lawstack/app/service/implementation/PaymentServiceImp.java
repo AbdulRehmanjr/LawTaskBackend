@@ -195,7 +195,8 @@ public class PaymentServiceImp implements PaymentService {
                 .putMetadata("user", order.getUser().getUserId())
                 .putMetadata("jobId", order.getJob().getJobId())
                 .putMetadata("buyerId", order.getCustomerId())
-                .putMetadata("Price", String.valueOf(order.getPrice()))
+                .putMetadata("price", String.valueOf(order.getPrice()))
+                .putMetadata("orderId", order.getId())
                 .build();
         Session session;
 
