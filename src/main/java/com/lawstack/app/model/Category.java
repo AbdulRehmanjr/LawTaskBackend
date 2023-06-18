@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name="CATEGORYTABLE")
@@ -29,6 +30,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore
+    @Transient
     private List<Job> jobs;
 
     public int getId() {

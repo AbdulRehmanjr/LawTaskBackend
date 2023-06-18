@@ -60,7 +60,7 @@ public class FreelancerController {
 
         if(freelancer == null){
             log.error("Freelancer not found by user Id: {}",userId);
-            ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(404).body(null);
         }
 
         return ResponseEntity.status(201).body(freelancer);

@@ -45,7 +45,8 @@ public class FreelancerServiceImp implements FreelancerService {
     public Freelancer getOneFreelancer(String id) {
 
         log.info("Fetching the Freelancer by id : {}", id);
-        Freelancer freelancer = this.flRepo.findById(id).get();
+        
+        Freelancer freelancer = this.flRepo.findById(id).orElse(null);
         if (freelancer == null) {
             return null;
         }
